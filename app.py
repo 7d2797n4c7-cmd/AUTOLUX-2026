@@ -1029,7 +1029,7 @@ def profile():
 # ===========================================
 
 @app.route("/order/<int:order_id>")
-def order(order_id):
+def order_details(order_id):
 
     if "user_id" not in session:
         return redirect("/login")
