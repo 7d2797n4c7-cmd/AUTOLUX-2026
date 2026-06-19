@@ -11,6 +11,7 @@ import feedparser
 import requests
 import os
 import time
+from pathlib import Path
 
 app = Flask(__name__)
 app.secret_key = "AUTOLUX_SECRET_KEY"
@@ -21,6 +22,44 @@ def db():
     return psycopg2.connect(
         os.environ["DATABASE_URL"]
     )
+    def init_database():
+
+    conn = db()
+    cur = conn.cursor()
+
+    cur.execute("""
+
+        SELECT EXISTS(
+
+            SELECT 1
+
+            FROM information_schema.tables
+
+            WHERE table_name='car_brands'
+
+        )
+
+    """)
+
+    exists = cur.fetchone()[0]
+
+    if not exists:
+
+        print("===== INIT DATABASE =====")
+
+        schema = Path("schema.sql").read_text(
+            encoding="utf-8"
+        )
+
+        cur.execute(schema)
+
+        conn.commit()
+
+        print("===== DATABASE CREATED =====")
+
+    cur.close()
+    conn.close()
+    
 
 # ---------------- NEWS CACHE ----------------
 
@@ -2171,5 +2210,8 @@ def admin_change_status(order_id):
 # RUN
 # ===========================================
 
+init_database()
+
 if __name__ == "__main__":
+
     app.run(debug=True)
