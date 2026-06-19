@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header">
+
+    <h1>
+
+        Заказ №{{ order[0] }}
+
+    </h1>
+
+    <p>
+
+        Отслеживание заказа
+
+    </p>
+
+</section>
+
+<div class="order-layout">
+
+    <div class="order-main">
+
+        <div class="card">
+
+            <h2>Статус заказа</h2>
+
+            <div class="status-timeline">
+
+                <div class="timeline-step active">
+
+                    <div class="circle">1</div>
+
+                    <span>Оформлен</span>
+
+                </div>
+
+                <div class="timeline-line"></div>
+
+                <div class="timeline-step {% if order[1] != 'Новый' %}active{% endif %}">
+
+                    <div class="circle">2</div>
+
+                    <span>В обработке</span>
+
+                </div>
+
+                <div class="timeline-line"></div>
+
+                <div class="timeline-step {% if order[1] == 'Отправлен' or order[1] == 'Доставлен' %}active{% endif %}">
+
+                    <div class="circle">3</div>
+
+                    <span>Отправлен</span>
+
+                </div>
+
+                <div class="timeline-line"></div>
+
+                <div class="timeline-step {% if order[1] == 'Доставлен' %}active{% endif %}">
+
+                    <div class="circle">4</div>
+
+                    <span>Доставлен</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>
+
+                Состав заказа
+
+            </h2>
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Товар</th>
+
+                        <th>Кол-во</th>
+
+                        <th>Цена</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for i in items %}
+
+                <tr>
+
+                    <td>{{ i[0] }}</td>
+
+                    <td>{{ i[1] }}</td>
+
+                    <td>{{ i[2] }} ₸</td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="order-sidebar">
+
+        <div class="card">
+
+            <h2>
+
+                Информация
+
+            </h2>
+
+            <p>
+
+                <strong>Статус</strong><br>
+
+                {{ order[1] }}
+
+            </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Стоимость</strong><br>
+
+                {{ order[2] }} ₸
+
+            </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Дата</strong><br>
+
+                {{ order[3] }}
+
+            </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Адрес</strong><br>
+
+                {{ order[4] }}
+
+            </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Телефон</strong><br>
+
+                {{ order[5] }}
+
+            </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Комментарий</strong><br>
+
+                {{ order[6] }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

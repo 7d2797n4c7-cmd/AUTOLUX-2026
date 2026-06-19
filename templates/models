@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header fade-up">
+
+    <h1>
+
+        {{ brand_name }}
+
+    </h1>
+
+    <p>
+
+        Выберите модель автомобиля
+
+    </p>
+
+</section>
+
+<div class="models-grid">
+
+{% for model in models %}
+
+<a
+
+href="/catalog/{{ model[0] }}"
+
+class="model-card"
+
+>
+
+<div class="model-icon">
+
+🚗
+
+</div>
+
+<div class="model-name">
+
+{{ model[1] }}
+
+</div>
+
+<div class="model-desc">
+
+Запчасти • ТО • Масла • Фильтры
+
+</div>
+
+<div class="model-open">
+
+Перейти →
+
+</div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

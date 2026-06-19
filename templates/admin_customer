@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-page">
+
+<h1>
+
+{{ customer.username }}
+
+</h1>
+
+<div class="dashboard-cards">
+
+<div class="dashboard-card">
+
+<div>
+
+<h2>
+
+{{ customer.orders }}
+
+</h2>
+
+<span>
+
+Заказов
+
+</span>
+
+</div>
+
+</div>
+
+<div class="dashboard-card">
+
+<div>
+
+<h2>
+
+{{ customer.total }} ₸
+
+</h2>
+
+<span>
+
+Потрачено
+
+</span>
+
+</div>
+
+</div>
+
+<div class="dashboard-card">
+
+<div>
+
+<h2>
+
+{{ customer.average }} ₸
+
+</h2>
+
+<span>
+
+Средний чек
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+Последние заказы
+
+</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Дата</th>
+
+<th>Стоимость</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for o in orders %}
+
+<tr>
+
+<td>
+
+#{{ o[0] }}
+
+</td>
+
+<td>
+
+{{ o[1] }}
+
+</td>
+
+<td>
+
+{{ o[2] }} ₸
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header">
+
+<h1>
+
+Корзина
+
+</h1>
+
+<p>
+
+Проверьте товары перед оформлением заказа
+
+</p>
+
+</section>
+
+{% if cart %}
+
+<div class="cart-layout">
+
+<div class="cart-items">
+
+{% for item in cart %}
+
+<div class="cart-item">
+
+<div class="cart-image">
+
+<img src="{{ item.image }}">
+
+</div>
+
+<div class="cart-info">
+
+<h2>
+
+{{ item.title }}
+
+</h2>
+
+<p>
+
+{{ item.brand }}
+
+</p>
+
+<div class="cart-price">
+
+{{ item.price }} ₸
+
+</div>
+
+</div>
+
+<div class="cart-qty">
+
+<a
+
+href="/cart/minus/{{ item.id }}"
+
+class="qty-btn">
+
+−
+
+</a>
+
+<span>
+
+{{ item.qty }}
+
+</span>
+
+<a
+
+href="/cart/plus/{{ item.id }}"
+
+class="qty-btn">
+
++
+
+</a>
+
+</div>
+
+<div class="cart-total">
+
+{{ item.total }} ₸
+
+</div>
+
+<a
+
+href="/cart/delete/{{ item.id }}"
+
+class="delete-btn">
+
+🗑
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<div class="checkout-box">
+
+<h2>
+
+Итого
+
+</h2>
+
+<div class="checkout-line">
+
+<span>
+
+Товаров
+
+</span>
+
+<span>
+
+{{ count }}
+
+</span>
+
+</div>
+
+<div class="checkout-line">
+
+<span>
+
+Стоимость
+
+</span>
+
+<span>
+
+{{ total }} ₸
+
+</span>
+
+</div>
+
+<div class="checkout-line">
+
+<span>
+
+Доставка
+
+</span>
+
+<span>
+
+Бесплатно
+
+</span>
+
+</div>
+
+<hr>
+
+<div class="checkout-total">
+
+{{ total }} ₸
+
+</div>
+
+<a
+
+href="/checkout"
+
+class="btn glow">
+
+Оформить заказ
+
+</a>
+
+</div>
+
+</div>
+
+{% else %}
+
+<div class="empty-cart">
+
+🛒
+
+<h2>
+
+Корзина пуста
+
+</h2>
+
+<p>
+
+Добавьте товары в корзину
+
+</p>
+
+<a
+
+href="/brands"
+
+class="btn">
+
+Перейти в каталог
+
+</a>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

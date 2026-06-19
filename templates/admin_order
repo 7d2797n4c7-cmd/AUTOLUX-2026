@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-page">
+
+<div class="admin-top">
+
+<h1>
+
+Заказ №{{ order.id }}
+
+</h1>
+
+<a href="/admin/orders" class="btn">
+
+← Назад
+
+</a>
+
+</div>
+
+<div class="order-admin-grid">
+
+<div class="card">
+
+<h2>
+
+Информация о клиенте
+
+</h2>
+
+<table class="info-table">
+
+<tr>
+
+<td>ФИО</td>
+
+<td>{{ order.full_name }}</td>
+
+</tr>
+
+<tr>
+
+<td>Телефон</td>
+
+<td>{{ order.phone }}</td>
+
+</tr>
+
+<tr>
+
+<td>Адрес</td>
+
+<td>{{ order.address }}</td>
+
+</tr>
+
+<tr>
+
+<td>Город</td>
+
+<td>{{ order.city }}</td>
+
+</tr>
+
+<tr>
+
+<td>Оплата</td>
+
+<td>{{ order.payment }}</td>
+
+</tr>
+
+<tr>
+
+<td>Дата</td>
+
+<td>{{ order.created_at }}</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+Изменить статус
+
+</h2>
+
+<form
+
+method="POST"
+
+action="/admin/order/{{ order.id }}/status">
+
+<select
+
+name="status_id"
+
+class="admin-select">
+
+{% for s in statuses %}
+
+<option
+
+value="{{ s[0] }}"
+
+{% if s[0]==order.status_id %}selected{% endif %}>
+
+{{ s[1] }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+<button
+
+class="btn glow"
+
+style="margin-top:20px;width:100%;">
+
+Сохранить
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<div class="card"
+
+style="margin-top:35px;">
+
+<h2>
+
+Товары заказа
+
+</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Товар</th>
+
+<th>Количество</th>
+
+<th>Цена</th>
+
+<th>Сумма</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for i in items %}
+
+<tr>
+
+<td>
+
+{{ i.title }}
+
+</td>
+
+<td>
+
+{{ i.quantity }}
+
+</td>
+
+<td>
+
+{{ i.price }} ₸
+
+</td>
+
+<td>
+
+{{ i.total }} ₸
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}

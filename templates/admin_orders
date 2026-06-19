@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-page">
+
+<div class="admin-top">
+
+<h1>
+
+Управление заказами
+
+</h1>
+
+<form method="GET">
+
+<input
+
+type="text"
+
+name="search"
+
+placeholder="Поиск по ФИО или телефону"
+
+value="{{ request.args.get('search','') }}">
+
+<button class="btn">
+
+Поиск
+
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Клиент</th>
+
+<th>Телефон</th>
+
+<th>Город</th>
+
+<th>Стоимость</th>
+
+<th>Статус</th>
+
+<th>Дата</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for o in orders %}
+
+<tr>
+
+<td>
+
+#{{ o.id }}
+
+</td>
+
+<td>
+
+{{ o.full_name }}
+
+</td>
+
+<td>
+
+{{ o.phone }}
+
+</td>
+
+<td>
+
+{{ o.city }}
+
+</td>
+
+<td>
+
+{{ o.total_price }} ₸
+
+</td>
+
+<td>
+
+<span class="status {{ o.color }}">
+
+{{ o.status }}
+
+</span>
+
+</td>
+
+<td>
+
+{{ o.created_at.strftime("%d.%m.%Y") }}
+
+</td>
+
+<td>
+
+<a
+
+href="/admin/order/{{ o.id }}"
+
+class="btn">
+
+Открыть
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}

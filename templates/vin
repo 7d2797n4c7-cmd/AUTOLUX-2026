@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header">
+
+<h1>
+
+VIN-подбор запчастей
+
+</h1>
+
+<p>
+
+Отправьте VIN автомобиля, и наши специалисты подберут необходимые детали.
+
+</p>
+
+</section>
+
+<div class="vin-layout">
+
+<div class="card">
+
+<form method="POST">
+
+<label>VIN автомобиля</label>
+
+<input
+type="text"
+name="vin"
+maxlength="17"
+placeholder="Например: JTNB11HK503123456"
+required>
+
+<label>Телефон</label>
+
+<input
+type="text"
+name="phone"
+placeholder="+7 777 123 45 67"
+required>
+
+<label>Комментарий</label>
+
+<textarea
+name="comment"
+rows="5"
+placeholder="Какие запчасти нужны?"></textarea>
+
+<button
+class="btn glow"
+style="margin-top:25px;">
+
+Отправить запрос
+
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+Что дает VIN?
+
+</h2>
+
+<ul class="vin-list">
+
+<li>✔ Точный подбор оригинальных деталей</li>
+
+<li>✔ Исключение ошибок при заказе</li>
+
+<li>✔ Подбор аналогов</li>
+
+<li>✔ Проверка комплектации автомобиля</li>
+
+<li>✔ Бесплатная консультация специалиста</li>
+
+</ul>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header">
+
+<h1>Оформление заказа</h1>
+
+<p>Заполните данные для доставки</p>
+
+</section>
+
+<form method="POST" class="checkout-form">
+
+<div class="checkout-grid">
+
+<div>
+
+<label>ФИО</label>
+
+<input
+type="text"
+name="full_name"
+required>
+
+<label>Телефон</label>
+
+<input
+type="text"
+name="phone"
+required>
+
+<label>Город</label>
+
+<select name="city">
+
+{% for c in cities %}
+
+<option value="{{ c[0] }}">
+
+{{ c[1] }}
+
+(+{{ c[2] }} ₸)
+
+</option>
+
+{% endfor %}
+
+</select>
+
+<label>Адрес доставки</label>
+
+<textarea
+name="address"
+rows="4"
+required></textarea>
+
+<label>Комментарий</label>
+
+<textarea
+name="comment"
+rows="3"></textarea>
+
+</div>
+
+<div class="checkout-right">
+
+<h2>Способ оплаты</h2>
+
+{% for p in payments %}
+
+<label class="radio-card">
+
+<input
+type="radio"
+name="payment"
+value="{{ p[0] }}"
+required>
+
+<span>
+
+{{ p[1] }}
+
+</span>
+
+</label>
+
+{% endfor %}
+
+<hr>
+
+<div class="checkout-summary">
+
+<div>
+
+Товаров
+
+<span>
+
+{{ count }}
+
+</span>
+
+</div>
+
+<div>
+
+Сумма
+
+<span>
+
+{{ total }} ₸
+
+</span>
+
+</div>
+
+</div>
+
+<button
+class="btn glow"
+type="submit">
+
+Подтвердить заказ
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+{% endblock %}

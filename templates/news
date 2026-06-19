@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero fade-up">
+
+    <div class="hero-left">
+
+        <span class="hero-label">
+            PREMIUM AUTO MARKETPLACE
+        </span>
+
+        <h1>
+
+            AUTOLUX
+
+            <span>
+
+                Автозапчасти нового поколения
+
+            </span>
+
+        </h1>
+
+        <p>
+
+            Более 1 000 000 оригинальных и аналоговых запчастей.
+            Подбор по VIN, доставка по всему Казахстану,
+            акции, онлайн-заказ и профессиональная поддержка.
+
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="/brands" class="btn glow">
+
+                Каталог автомобилей
+
+            </a>
+
+            <a href="/vin" class="btn btn-dark">
+
+                VIN подбор
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="hero-right">
+
+        <img
+        src="/static/images/hero-car.png"
+        class="hero-image">
+
+    </div>
+
+</section>
+
+<!-- ===================================== -->
+
+<section class="section fade-up">
+
+    <div class="section-title">
+
+        <h2>
+
+            Популярные бренды
+
+        </h2>
+
+    </div>
+
+    <div class="products-grid">
+
+        {% for brand in brands %}
+
+        <a
+
+        href="/brand/{{ brand[0] }}"
+
+        class="card"
+
+        style="text-decoration:none;color:white;">
+
+            <div
+            style="padding:35px;text-align:center;">
+
+                <img
+
+                src="{{ brand[2] }}"
+
+                style="
+
+                height:90px;
+
+                object-fit:contain;
+
+                margin-bottom:20px;
+
+                ">
+
+                <h3>
+
+                    {{ brand[1] }}
+
+                </h3>
+
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<!-- ===================================== -->
+
+<section class="section fade-up">
+
+    <div class="section-title">
+
+        <h2>
+
+            Популярные товары
+
+        </h2>
+
+    </div>
+
+    <div class="products-grid">
+
+        {% for p in popular_products %}
+
+        <div class="product">
+
+            <div class="product-image">
+
+                <img src="{{ p[3] }}">
+
+            </div>
+
+            <div class="product-info">
+
+                <div class="product-brand">
+
+                    {{ p[4] }}
+
+                </div>
+
+                <div class="product-name">
+
+                    {{ p[1] }}
+
+                </div>
+
+                <div class="product-rating">
+
+                    ⭐ {{ p[5] }}
+
+                </div>
+
+                <div class="product-footer">
+
+                    <div class="price">
+
+                        {{ p[2] }} ₸
+
+                    </div>
+
+                    <a
+
+                    href="/product/{{ p[0] }}"
+
+                    class="btn">
+
+                        Подробнее
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<!-- ===================================== -->
+
+<section class="section fade-up">
+
+    <div class="section-title">
+
+        <h2>
+
+            Автомобильные новости
+
+        </h2>
+
+    </div>
+
+    <div class="news-grid">
+
+        {% for n in news %}
+
+        <div class="news-card">
+
+            <img
+
+            src="{{ n.image }}"
+
+            loading="lazy">
+
+            <div class="news-content">
+
+                <h3>
+
+                    {{ n.title }}
+
+                </h3>
+
+                <p>
+
+                    {{ n.description|safe }}
+
+                </p>
+
+                <a
+
+                href="{{ n.link }}"
+
+                target="_blank"
+
+                class="btn">
+
+                    Читать полностью
+
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<!-- ===================================== -->
+
+<section class="section">
+
+    <div
+
+    class="card"
+
+    style="
+
+    padding:60px;
+
+    text-align:center;
+
+    ">
+
+        <h2
+
+        style="font-size:46px;">
+
+            Не нашли нужную деталь?
+
+        </h2>
+
+        <p
+
+        style="
+
+        margin:30px auto;
+
+        max-width:700px;
+
+        color:#bfc8d4;
+
+        ">
+
+            Отправьте VIN автомобиля и специалисты AUTOLUX
+            бесплатно подберут оригинальные детали
+            и качественные аналоги.
+
+        </p>
+
+        <a
+
+        href="/vin"
+
+        class="btn glow">
+
+            Подобрать по VIN
+
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

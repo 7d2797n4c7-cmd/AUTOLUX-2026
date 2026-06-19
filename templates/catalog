@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header fade-up">
+
+    <h1>{{ model_name }}</h1>
+
+    <p>Каталог запчастей и товаров</p>
+
+</section>
+
+<div class="catalog-toolbar">
+
+    <form method="GET" class="search-form">
+
+        <input
+            type="text"
+            name="q"
+            placeholder="Поиск запчастей..."
+            value="{{ request.args.get('q','') }}"
+            class="search-input">
+
+        <button class="btn">
+            Поиск
+        </button>
+
+    </form>
+
+</div>
+
+<div class="catalog-grid">
+
+{% for p in products %}
+
+<div class="product-card fade-up">
+
+    <div class="product-image">
+
+        <img src="{{ p[7] }}">
+
+    </div>
+
+    <div class="product-body">
+
+        <div class="product-brand">
+
+            {{ p[5] }}
+
+        </div>
+
+        <h2>
+
+            {{ p[3] }}
+
+        </h2>
+
+        <p>
+
+            {{ p[4] }}
+
+        </p>
+
+        <div class="product-rating">
+
+            ⭐ {{ p[11] }}
+
+        </div>
+
+        <div class="product-stock">
+
+            {% if p[9] > 0 %}
+
+                ✅ В наличии
+
+            {% else %}
+
+                ❌ Нет в наличии
+
+            {% endif %}
+
+        </div>
+
+        <div class="product-price">
+
+            {{ p[8] }} ₸
+
+        </div>
+
+        <div class="product-buttons">
+
+            <a
+
+            href="/product/{{ p[0] }}"
+
+            class="btn">
+
+                Подробнее
+
+            </a>
+
+            <a
+
+            href="/buy/{{ p[0] }}"
+
+            class="btn btn-gold">
+
+                Купить
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

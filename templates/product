@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="product-page fade-up">
+
+<div class="product-gallery">
+
+<img
+
+src="{{ product.image }}"
+
+class="main-product-image">
+
+</div>
+
+<div class="product-details">
+
+<div class="product-brand-big">
+
+{{ product.brand }}
+
+</div>
+
+<h1>
+
+{{ product.title }}
+
+</h1>
+
+<div class="rating">
+
+⭐ {{ product.rating }}
+
+</div>
+
+<p class="description">
+
+{{ product.description }}
+
+</p>
+
+<div class="product-price-big">
+
+{{ product.price }} ₸
+
+</div>
+
+{% if product.stock>0 %}
+
+<div class="stock yes">
+
+В наличии
+
+{{ product.stock }}
+
+шт.
+
+</div>
+
+{% else %}
+
+<div class="stock no">
+
+Нет в наличии
+
+</div>
+
+{% endif %}
+
+<div class="buy-buttons">
+
+<a
+
+href="/buy/{{ product.id }}"
+
+class="btn glow">
+
+Купить сейчас
+
+</a>
+
+<a
+
+href="/cart/add/{{ product.id }}"
+
+class="btn btn-dark">
+
+В корзину
+
+</a>
+
+</div>
+
+<div class="product-info-grid">
+
+<div>
+
+Артикул
+
+<span>
+
+{{ product.article }}
+
+</span>
+
+</div>
+
+<div>
+
+Продано
+
+<span>
+
+{{ product.sold }}
+
+</span>
+
+</div>
+
+<div>
+
+Просмотров
+
+<span>
+
+{{ product.views }}
+
+</span>
+
+</div>
+
+<div>
+
+Бренд
+
+<span>
+
+{{ product.brand }}
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<section class="section">
+
+<h2>
+
+Похожие товары
+
+</h2>
+
+<div class="products-grid">
+
+{% for p in similar %}
+
+<div class="product">
+
+<div class="product-image">
+
+<img src="{{ p.image }}">
+
+</div>
+
+<div class="product-info">
+
+<h3>
+
+{{ p.title }}
+
+</h3>
+
+<div class="price">
+
+{{ p.price }} ₸
+
+</div>
+
+<a
+
+href="/product/{{ p.id }}"
+
+class="btn">
+
+Подробнее
+
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>
+
+Отзывы покупателей
+
+</h2>
+
+{% if reviews %}
+
+{% for r in reviews %}
+
+<div class="review">
+
+<div class="review-head">
+
+<strong>
+
+{{ r.username }}
+
+</strong>
+
+<span>
+
+⭐ {{ r.rating }}
+
+</span>
+
+</div>
+
+<p>
+
+{{ r.review }}
+
+</p>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="empty">
+
+Пока нет отзывов.
+
+</div>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

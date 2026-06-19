@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header fade-up">
+
+    <h1>
+
+        Каталог автомобилей
+
+    </h1>
+
+    <p>
+
+        Выберите производителя автомобиля
+
+    </p>
+
+</section>
+
+
+<div class="brands-grid">
+
+{% for brand in brands %}
+
+<a
+
+href="/brand/{{ brand[0] }}"
+
+class="brand-card glow"
+
+>
+
+<div class="brand-logo">
+
+<img src="{{ brand[2] }}">
+
+</div>
+
+<div class="brand-info">
+
+<h2>
+
+{{ brand[1] }}
+
+</h2>
+
+<p>
+
+Оригинальные детали • ТО • Масла • Фильтры
+
+</p>
+
+<span class="brand-link">
+
+Открыть каталог →
+
+</span>
+
+</div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

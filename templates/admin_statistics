@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-page">
+
+<div class="admin-top">
+
+<h1>
+
+Аналитика магазина
+
+</h1>
+
+</div>
+
+<div class="dashboard-cards">
+
+<div class="dashboard-card">
+
+<div class="icon">
+
+💰
+
+</div>
+
+<div>
+
+<h2>
+
+{{ revenue }} ₸
+
+</h2>
+
+<span>
+
+Общая выручка
+
+</span>
+
+</div>
+
+</div>
+
+<div class="dashboard-card">
+
+<div class="icon">
+
+📦
+
+</div>
+
+<div>
+
+<h2>
+
+{{ orders_count }}
+
+</h2>
+
+<span>
+
+Всего заказов
+
+</span>
+
+</div>
+
+</div>
+
+<div class="dashboard-card">
+
+<div class="icon">
+
+👥
+
+</div>
+
+<div>
+
+<h2>
+
+{{ users_count }}
+
+</h2>
+
+<span>
+
+Пользователей
+
+</span>
+
+</div>
+
+</div>
+
+<div class="dashboard-card">
+
+<div class="icon">
+
+🚗
+
+</div>
+
+<div>
+
+<h2>
+
+{{ brands_count }}
+
+</h2>
+
+<span>
+
+Марок авто
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="analytics-grid">
+
+<div class="card">
+
+<h2>
+
+ТОП товаров
+
+</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Товар</th>
+
+<th>Продано</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for p in top_products %}
+
+<tr>
+
+<td>
+
+{{ p.title }}
+
+</td>
+
+<td>
+
+{{ p.sold }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+ТОП брендов
+
+</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Марка</th>
+
+<th>Продаж</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for b in brands %}
+
+<tr>
+
+<td>
+
+{{ b.brand }}
+
+</td>
+
+<td>
+
+{{ b.count }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div class="card"
+
+style="margin-top:35px;">
+
+<h2>
+
+Популярные модели
+
+</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Модель</th>
+
+<th>Продаж</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for m in models %}
+
+<tr>
+
+<td>
+
+{{ m.model }}
+
+</td>
+
+<td>
+
+{{ m.count }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}

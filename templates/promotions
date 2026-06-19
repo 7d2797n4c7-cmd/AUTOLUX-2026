@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="page-header">
+
+<h1>
+
+🔥 Акции и спецпредложения
+
+</h1>
+
+<p>
+
+Лучшие предложения AUTOLUX
+
+</p>
+
+</section>
+
+<div class="promo-grid">
+
+{% for p in promotions %}
+
+<div class="promo-card">
+
+<div class="promo-image">
+
+<img src="{{ p.image }}">
+
+<div class="discount">
+
+-{{ p.discount }}%
+
+</div>
+
+</div>
+
+<div class="promo-body">
+
+<h2>
+
+{{ p.title }}
+
+</h2>
+
+<p>
+
+{{ p.description }}
+
+</p>
+
+<div class="promo-code">
+
+{{ p.code }}
+
+</div>
+
+<div class="promo-date">
+
+до
+
+{{ p.end }}
+
+</div>
+
+<a
+
+href="/catalog"
+
+class="btn glow">
+
+Перейти
+
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

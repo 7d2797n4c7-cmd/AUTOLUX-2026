@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="admin-page">
+
+<div class="admin-top">
+
+<h1>
+
+Клиенты
+
+</h1>
+
+<form method="GET">
+
+<input
+
+type="text"
+
+name="search"
+
+placeholder="Поиск клиента"
+
+value="{{ request.args.get('search','') }}">
+
+<button class="btn">
+
+Найти
+
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Пользователь</th>
+
+<th>Email</th>
+
+<th>Телефон</th>
+
+<th>Заказов</th>
+
+<th>Потрачено</th>
+
+<th>Средний чек</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for c in customers %}
+
+<tr>
+
+<td>
+
+{{ c.id }}
+
+</td>
+
+<td>
+
+{{ c.username }}
+
+</td>
+
+<td>
+
+{{ c.email }}
+
+</td>
+
+<td>
+
+{{ c.phone }}
+
+</td>
+
+<td>
+
+{{ c.orders }}
+
+</td>
+
+<td>
+
+{{ c.total }} ₸
+
+</td>
+
+<td>
+
+{{ c.average }} ₸
+
+</td>
+
+<td>
+
+<a
+
+href="/admin/customer/{{ c.id }}"
+
+class="btn">
+
+Открыть
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}
