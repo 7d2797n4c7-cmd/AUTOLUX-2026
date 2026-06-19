@@ -2457,7 +2457,7 @@ def admin_change_status(order_id):
 
 
 @app.route("/vin", methods=["GET","POST"])
-def vin():
+def vin_request():
 
     if request.method=="POST":
 
