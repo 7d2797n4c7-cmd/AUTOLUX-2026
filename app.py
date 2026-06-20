@@ -6,12 +6,13 @@ from flask import session
 from flask import flash
 from flask import jsonify
 
-import psycopg2
-import feedparser
-import requests
 import os
 import time
 from pathlib import Path
+
+import psycopg2
+import feedparser
+import requests
 
 app = Flask(__name__)
 app.secret_key = "AUTOLUX_SECRET_KEY"
@@ -19,46 +20,62 @@ app.secret_key = "AUTOLUX_SECRET_KEY"
 # ---------------- DATABASE ----------------
 
 def db():
+
     return psycopg2.connect(
-        os.environ["DATABASE_URL"]
+
+        os.getenv("DATABASE_URL"),
+
+        sslmode="require"
+
     )
-    def init_database():
+
+
+def init_database():
 
     conn = db()
     cur = conn.cursor()
 
-    cur.execute("""
+    try:
 
-        SELECT EXISTS(
+        cur.execute("""
 
-            SELECT 1
+            SELECT EXISTS(
 
-            FROM information_schema.tables
+                SELECT 1
 
-            WHERE table_name='car_brands'
+                FROM information_schema.tables
 
-        )
+                WHERE table_name='car_brands'
 
-    """)
+            )
 
-    exists = cur.fetchone()[0]
+        """)
 
-    if not exists:
+        exists = cur.fetchone()[0]
 
-        print("===== INIT DATABASE =====")
+        if not exists:
 
-        schema = Path("schema.sql").read_text(
-            encoding="utf-8"
-        )
+            print("===== DATABASE INIT =====")
 
-        cur.execute(schema)
+            with open("schema.sql", "r", encoding="utf-8") as f:
+                schema = f.read()
 
-        conn.commit()
+            cur.execute(schema)
 
-        print("===== DATABASE CREATED =====")
+            conn.commit()
 
-    cur.close()
-    conn.close()
+            print("===== DATABASE READY =====")
+
+    except Exception as e:
+
+        conn.rollback()
+        print("DATABASE INIT ERROR:", e)
+        raise
+
+    finally:
+
+        cur.close()
+        conn.close()
     
 
 # ---------------- NEWS CACHE ----------------
@@ -2213,5 +2230,4 @@ def admin_change_status(order_id):
 init_database()
 
 if __name__ == "__main__":
-
     app.run(debug=True)
