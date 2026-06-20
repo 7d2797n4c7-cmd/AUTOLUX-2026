@@ -5,6 +5,7 @@ from flask import redirect
 from flask import session
 from flask import flash
 from flask import jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import os
 import time
@@ -13,6 +14,7 @@ from pathlib import Path
 import psycopg2
 import feedparser
 import requests
+
 
 app = Flask(__name__)
 app.secret_key = "AUTOLUX_SECRET_KEY"
@@ -209,59 +211,57 @@ def home():
 # LOGIN
 # ===========================================
 
-@app.route("/login", methods=["GET","POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-        username=request.form["username"]
-        password=request.form["password"]
+        username = request.form["username"].strip()
+        password = request.form["password"]
 
         # ---------------- ADMIN ----------------
 
-        if username=="admin" and password=="admin":
+        if username == "admin" and password == "admin":
 
             session.clear()
 
-            session["admin"]=True
-            session["username"]="Administrator"
+            session["admin"] = True
+            session["username"] = "Administrator"
 
             return redirect("/admin")
 
-        conn=db()
-        cur=conn.cursor()
+        conn = db()
+        cur = conn.cursor()
 
-        cur.execute("""
-
+        cur.execute(
+            """
             SELECT
-
                 id,
-                username
-
+                username,
+                password
             FROM users
-
             WHERE username=%s
-            AND password=%s
+            """,
+            (username,)
+        )
 
-        """,(
+        user = cur.fetchone()
 
-            username,
-            password
-
-        ))
-
-        user=cur.fetchone()
-
+        cur.close()
         conn.close()
 
-        if user:
+        if user and check_password_hash(user[2], password):
 
-            session["user_id"]=user[0]
-            session["username"]=user[1]
+            session.clear()
+
+            session["user_id"] = user[0]
+            session["username"] = user[1]
+
+            flash("Добро пожаловать!", "success")
 
             return redirect("/profile")
 
-        flash("Неверный логин или пароль")
+        flash("Неверный логин или пароль", "danger")
 
     return render_template("login.html")
 
@@ -270,46 +270,68 @@ def login():
 # REGISTER
 # ===========================================
 
-@app.route("/register", methods=["GET","POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-        username=request.form["username"]
-        email=request.form["email"]
-        password=request.form["password"]
+        username = request.form["username"].strip()
+        email = request.form["email"].strip().lower()
+        password = request.form["password"]
 
-        conn=db()
-        cur=conn.cursor()
+        conn = db()
+        cur = conn.cursor()
 
-        cur.execute("""
+        # Проверяем, существует ли пользователь
+        cur.execute(
+            """
+            SELECT id
+            FROM users
+            WHERE username=%s OR email=%s
+            """,
+            (username, email)
+        )
 
-            INSERT INTO users(
+        if cur.fetchone():
 
+            flash("Пользователь с таким именем или email уже существует", "danger")
+
+            cur.close()
+            conn.close()
+
+            return redirect("/register")
+
+        # Хешируем пароль
+        password_hash = generate_password_hash(password)
+
+        cur.execute(
+            """
+            INSERT INTO users
+            (
                 username,
                 email,
                 password
-
             )
-
-            VALUES(
-
-                %s,%s,%s
-
+            VALUES
+            (
+                %s,
+                %s,
+                %s
             )
-
-        """,(
-
-            username,
-            email,
-            password
-
-        ))
+            """,
+            (
+                username,
+                email,
+                password_hash
+            )
+        )
 
         conn.commit()
+
+        cur.close()
         conn.close()
 
-        flash("Аккаунт успешно создан")
+        flash("Регистрация успешно завершена!", "success")
 
         return redirect("/login")
 
@@ -324,6 +346,8 @@ def register():
 def logout():
 
     session.clear()
+
+    flash("Вы вышли из аккаунта", "success")
 
     return redirect("/")
 

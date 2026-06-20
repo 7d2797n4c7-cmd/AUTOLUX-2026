@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <h1>Добро пожаловать</h1>
+
+        <p>
+            Войдите в аккаунт AUTOLUX
+        </p>
+
+        <form method="POST">
+
+            <div class="input-group">
+
+                <label>Логин</label>
+
+                <input
+                type="text"
+                name="username"
+                required>
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Пароль</label>
+
+                <input
+                type="password"
+                name="password"
+                required>
+
+            </div>
+
+            <button class="main-btn">
+
+                Войти
+
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+
+            Нет аккаунта?
+
+            <a href="/register">
+
+                Создать
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

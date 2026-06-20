@@ -167,6 +167,43 @@ AUTOLUX
 
 </div>
 
+{% if session.get("user_id") %}
+
+<a href="/cart">
+    <i class="bi bi-cart3"></i>
+</a>
+
+<a href="/profile">
+    <i class="bi bi-person-circle"></i>
+    {{ session["username"] }}
+</a>
+
+<a href="/logout">
+    Выход
+</a>
+
+{% elif session.get("admin") %}
+
+<a href="/admin">
+    CRM
+</a>
+
+<a href="/logout">
+    Выход
+</a>
+
+{% else %}
+
+<a href="/login">
+    Вход
+</a>
+
+<a href="/register">
+    Регистрация
+</a>
+
+{% endif %}
+
 <div>
 
 <h3>

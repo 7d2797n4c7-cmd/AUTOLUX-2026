@@ -2,37 +2,29 @@
 
 {% block content %}
 
-<section class="profile-header fade-up">
+<section class="profile-page">
 
-<div class="profile-card">
+<div class="profile-header">
 
-<img
+<div class="profile-avatar">
 
-src="{{ user[3] if user[3] else '/static/images/avatar.png' }}"
+<i class="bi bi-person-circle"></i>
 
-class="avatar">
+</div>
 
-<h2>
+<div>
 
-{{ user[0] }}
+<h1>
 
-</h2>
+{{ user.username }}
 
-<p>
-
-{{ user[1] }}
-
-</p>
+</h1>
 
 <p>
 
-{{ user[2] }}
+Премиум клиент AUTOLUX
 
 </p>
-
-<div class="profile-level">
-
-VIP CLIENT
 
 </div>
 
@@ -40,69 +32,169 @@ VIP CLIENT
 
 <div class="profile-stats">
 
-<div class="stat">
-
-<h3>
-
-{{ total_orders }}
-
-</h3>
-
-<span>
-
-Заказов
-
-</span>
-
-</div>
-
-<div class="stat">
-
-<h3>
-
-{{ total_spent }}
-
-₸
-
-</h3>
-
-<span>
-
-Потрачено
-
-</span>
-
-</div>
-
-<div class="stat">
-
-<h3>
-
-{{ orders|length }}
-
-</h3>
-
-<span>
-
-Активных
-
-</span>
-
-</div>
-
-</div>
-
-</section>
-
-<section class="section">
+<div class="profile-card">
 
 <h2>
 
-История заказов
+{{ total_orders }}
 
 </h2>
 
-<table class="table">
+<p>
+
+Заказов
+
+</p>
+
+</div>
+
+<div class="profile-card">
+
+<h2>
+
+{{ total_spent }} ₸
+
+</h2>
+
+<p>
+
+Потрачено
+
+</p>
+
+</div>
+
+<div class="profile-card">
+
+<h2>
+
+{{ favorites }}
+
+</h2>
+
+<p>
+
+Избранное
+
+</p>
+
+</div>
+
+<div class="profile-card">
+
+<h2>
+
+{{ vin_requests }}
+
+</h2>
+
+<p>
+
+VIN запросов
+
+</p>
+
+</div>
+
+</div>
+
+<div class="profile-grid">
+
+<div class="profile-box">
+
+<h2>
+
+Мои данные
+
+</h2>
+
+<table class="profile-table">
+
+<tr>
+
+<td>Логин</td>
+
+<td>{{ user.username }}</td>
+
+</tr>
+
+<tr>
+
+<td>Email</td>
+
+<td>{{ user.email }}</td>
+
+</tr>
+
+<tr>
+
+<td>Телефон</td>
+
+<td>{{ user.phone }}</td>
+
+</tr>
+
+<tr>
+
+<td>Дата регистрации</td>
+
+<td>{{ user.created_at }}</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="profile-box">
+
+<h2>
+
+Быстрые действия
+
+</h2>
+
+<div class="profile-buttons">
+
+<a href="/catalog" class="main-btn">
+
+Каталог
+
+</a>
+
+<a href="/cart" class="main-btn">
+
+Корзина
+
+</a>
+
+<a href="/orders" class="main-btn">
+
+Мои заказы
+
+</a>
+
+<a href="/vin" class="main-btn">
+
+VIN подбор
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<h2 class="section-title">
+
+Последние заказы
+
+</h2>
+
+<div class="table-container">
+
+<table class="modern-table">
 
 <thead>
 
@@ -110,13 +202,11 @@ VIP CLIENT
 
 <th>ID</th>
 
-<th>Статус</th>
-
-<th>Стоимость</th>
-
 <th>Дата</th>
 
-<th></th>
+<th>Статус</th>
+
+<th>Сумма</th>
 
 </tr>
 
@@ -124,45 +214,31 @@ VIP CLIENT
 
 <tbody>
 
-{% for o in orders %}
+{% for order in orders %}
 
 <tr>
 
 <td>
 
-#{{ o[0] }}
+#{{ order.id }}
 
 </td>
 
 <td>
 
-{{ o[1] }}
+{{ order.created_at }}
 
 </td>
 
 <td>
 
-{{ o[2] }} ₸
+{{ order.status }}
 
 </td>
 
 <td>
 
-{{ o[3] }}
-
-</td>
-
-<td>
-
-<a
-
-href="/order/{{ o[0] }}"
-
-class="btn">
-
-Подробнее
-
-</a>
+{{ order.total_price }} ₸
 
 </td>
 
@@ -173,6 +249,8 @@ class="btn">
 </tbody>
 
 </table>
+
+</div>
 
 </section>
 
