@@ -2,201 +2,73 @@
 
 {% block content %}
 
-<section class="profile-page">
+<h1 class="page-title">
 
-<div class="profile-header">
+Личный кабинет
 
-<div class="profile-avatar">
+</h1>
 
-<i class="bi bi-person-circle"></i>
+<div class="profile-grid">
+
+<div class="profile-card">
+
+<img
+
+class="avatar"
+
+src="{{ url_for('static', filename='avatar.png') }}"
+
+onerror="this.src='https://placehold.co/200x200?text=USER'">
+
+<h2>
+
+{{ user[0] }}
+
+</h2>
+
+<p>
+
+📧 {{ user[1] }}
+
+</p>
+
+<p>
+
+📞 {{ user[2] or "Не указан" }}
+
+</p>
+
+<p>
+
+📅 Регистрация
+
+{{ user[4].strftime("%d.%m.%Y") if user[4] }}
+
+</p>
+
+<a
+
+href="/logout"
+
+class="catalog-btn">
+
+Выйти
+
+</a>
 
 </div>
 
 <div>
 
-<h1>
-
-{{ user.username }}
-
-</h1>
-
-<p>
-
-Премиум клиент AUTOLUX
-
-</p>
-
-</div>
-
-</div>
-
-<div class="profile-stats">
-
-<div class="profile-card">
-
 <h2>
 
-{{ total_orders }}
+История заказов
 
 </h2>
 
-<p>
+{% if orders %}
 
-Заказов
-
-</p>
-
-</div>
-
-<div class="profile-card">
-
-<h2>
-
-{{ total_spent }} ₸
-
-</h2>
-
-<p>
-
-Потрачено
-
-</p>
-
-</div>
-
-<div class="profile-card">
-
-<h2>
-
-{{ favorites }}
-
-</h2>
-
-<p>
-
-Избранное
-
-</p>
-
-</div>
-
-<div class="profile-card">
-
-<h2>
-
-{{ vin_requests }}
-
-</h2>
-
-<p>
-
-VIN запросов
-
-</p>
-
-</div>
-
-</div>
-
-<div class="profile-grid">
-
-<div class="profile-box">
-
-<h2>
-
-Мои данные
-
-</h2>
-
-<table class="profile-table">
-
-<tr>
-
-<td>Логин</td>
-
-<td>{{ user.username }}</td>
-
-</tr>
-
-<tr>
-
-<td>Email</td>
-
-<td>{{ user.email }}</td>
-
-</tr>
-
-<tr>
-
-<td>Телефон</td>
-
-<td>{{ user.phone }}</td>
-
-</tr>
-
-<tr>
-
-<td>Дата регистрации</td>
-
-<td>{{ user.created_at }}</td>
-
-</tr>
-
-</table>
-
-</div>
-
-<div class="profile-box">
-
-<h2>
-
-Быстрые действия
-
-</h2>
-
-<div class="profile-buttons">
-
-<a href="/catalog" class="main-btn">
-
-Каталог
-
-</a>
-
-<a href="/cart" class="main-btn">
-
-Корзина
-
-</a>
-
-<a href="/orders" class="main-btn">
-
-Мои заказы
-
-</a>
-
-<a href="/vin" class="main-btn">
-
-VIN подбор
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-<h2 class="section-title">
-
-Последние заказы
-
-</h2>
-
-<div class="table-container">
-
-<table class="modern-table">
-
-<thead>
+<table class="cart-table">
 
 <tr>
 
@@ -204,15 +76,11 @@ VIN подбор
 
 <th>Дата</th>
 
-<th>Статус</th>
-
 <th>Сумма</th>
 
+<th></th>
+
 </tr>
-
-</thead>
-
-<tbody>
 
 {% for order in orders %}
 
@@ -220,25 +88,31 @@ VIN подбор
 
 <td>
 
-#{{ order.id }}
+#{{ order[0] }}
 
 </td>
 
 <td>
 
-{{ order.created_at }}
+{{ order[2].strftime("%d.%m.%Y") }}
 
 </td>
 
 <td>
 
-{{ order.status }}
+{{ "{:,.0f}".format(order[1]).replace(","," ") }} ₸
 
 </td>
 
 <td>
 
-{{ order.total_price }} ₸
+<a
+
+href="/order/{{ order[0] }}">
+
+Подробнее
+
+</a>
 
 </td>
 
@@ -246,12 +120,20 @@ VIN подбор
 
 {% endfor %}
 
-</tbody>
-
 </table>
+
+{% else %}
+
+<div class="empty-cart">
+
+У вас пока нет заказов.
 
 </div>
 
-</section>
+{% endif %}
+
+</div>
+
+</div>
 
 {% endblock %}

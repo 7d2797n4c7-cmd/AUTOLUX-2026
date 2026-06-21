@@ -2,89 +2,137 @@
 
 {% block content %}
 
-<div class="product-page fade-up">
+<div class="product-page">
 
-<div class="product-gallery">
+<div class="product-left">
 
-<img
+<img class="product-image"
+src="{{ url_for('static', filename='products/' + product[5]) }}"
+onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 
-src="{{ product.image }}"
+<div class="gallery">
 
-class="main-product-image">
-
-</div>
-
-<div class="product-details">
-
-<div class="product-brand-big">
-
-{{ product.brand }}
+<img src="{{ url_for('static', filename='products/' + product[5]) }}">
+<img src="{{ url_for('static', filename='products/' + product[5]) }}">
+<img src="{{ url_for('static', filename='products/' + product[5]) }}">
+<img src="{{ url_for('static', filename='products/' + product[5]) }}">
 
 </div>
 
-<h1>
+</div>
 
-{{ product.title }}
+<div class="product-right">
 
-</h1>
+<h1>{{ product[1] }}</h1>
 
 <div class="rating">
 
-⭐ {{ product.rating }}
+⭐ {{ product[7] }}
+
+<span>
+
+({{ product[8] }} отзывов)
+
+</span>
 
 </div>
 
-<p class="description">
+<div class="article">
 
-{{ product.description }}
-
-</p>
-
-<div class="product-price-big">
-
-{{ product.price }} ₸
+Артикул:
+<b>{{ product[2] }}</b>
 
 </div>
 
-{% if product.stock>0 %}
+<div class="price">
 
-<div class="stock yes">
-
-В наличии
-
-{{ product.stock }}
-
-шт.
+{{ "{:,.0f}".format(product[4]).replace(",", " ") }} ₸
 
 </div>
+
+<div class="stock">
+
+{% if product[6]>0 %}
+
+<span class="green">
+
+✔ В наличии
+
+</span>
 
 {% else %}
 
-<div class="stock no">
+<span class="red">
 
 Нет в наличии
 
-</div>
+</span>
 
 {% endif %}
 
-<div class="buy-buttons">
+</div>
 
-<a
+<table class="specs">
 
-href="/buy/{{ product.id }}"
+<tr>
 
-class="btn glow">
+<td>Производитель</td>
+
+<td>{{ product[14] }}</td>
+
+</tr>
+
+<tr>
+
+<td>Марка</td>
+
+<td>{{ product[11] }}</td>
+
+</tr>
+
+<tr>
+
+<td>Модель</td>
+
+<td>{{ product[12] }}</td>
+
+</tr>
+
+<tr>
+
+<td>Категория</td>
+
+<td>{{ product[13] }}</td>
+
+</tr>
+
+<tr>
+
+<td>Страна</td>
+
+<td>{{ product[9] }}</td>
+
+</tr>
+
+<tr>
+
+<td>Гарантия</td>
+
+<td>{{ product[10] }}</td>
+
+</tr>
+
+</table>
+
+<div class="buttons">
+
+<a class="buy-btn" href="/buy/{{ product[0] }}">
 
 Купить сейчас
 
 </a>
 
-<a
-
-href="/cart/add/{{ product.id }}"
-
-class="btn btn-dark">
+<a class="cart-btn" href="/cart/add/{{ product[0] }}">
 
 В корзину
 
@@ -92,63 +140,25 @@ class="btn btn-dark">
 
 </div>
 
-<div class="product-info-grid">
-
-<div>
-
-Артикул
-
-<span>
-
-{{ product.article }}
-
-</span>
-
-</div>
-
-<div>
-
-Продано
-
-<span>
-
-{{ product.sold }}
-
-</span>
-
-</div>
-
-<div>
-
-Просмотров
-
-<span>
-
-{{ product.views }}
-
-</span>
-
-</div>
-
-<div>
-
-Бренд
-
-<span>
-
-{{ product.brand }}
-
-</span>
-
 </div>
 
 </div>
 
-</div>
+<div class="description">
+
+<h2>
+
+Описание
+
+</h2>
+
+<p>
+
+{{ product[3] }}
+
+</p>
 
 </div>
-
-<section class="section">
 
 <h2>
 
@@ -158,35 +168,37 @@ class="btn btn-dark">
 
 <div class="products-grid">
 
-{% for p in similar %}
+{% for item in related %}
 
-<div class="product">
+<div class="product-card">
 
-<div class="product-image">
+<a href="/product/{{ item[0] }}">
 
-<img src="{{ p.image }}">
-
-</div>
-
-<div class="product-info">
+<img src="{{ url_for('static', filename='products/' + item[2]) }}"
+onerror="this.src='https://placehold.co/300x300?text=AUTOLUX'">
 
 <h3>
 
-{{ p.title }}
+{{ item[1] }}
 
 </h3>
 
-<div class="price">
+</a>
 
-{{ p.price }} ₸
+<div class="rating">
+
+⭐ {{ item[4] }}
 
 </div>
 
-<a
+<div class="price">
 
-href="/product/{{ p.id }}"
+{{ "{:,.0f}".format(item[3]).replace(",", " ") }} ₸
 
-class="btn">
+</div>
+
+<a class="catalog-btn"
+href="/product/{{ item[0] }}">
 
 Подробнее
 
@@ -194,64 +206,8 @@ class="btn">
 
 </div>
 
-</div>
-
 {% endfor %}
 
 </div>
-
-</section>
-
-<section class="section">
-
-<h2>
-
-Отзывы покупателей
-
-</h2>
-
-{% if reviews %}
-
-{% for r in reviews %}
-
-<div class="review">
-
-<div class="review-head">
-
-<strong>
-
-{{ r.username }}
-
-</strong>
-
-<span>
-
-⭐ {{ r.rating }}
-
-</span>
-
-</div>
-
-<p>
-
-{{ r.review }}
-
-</p>
-
-</div>
-
-{% endfor %}
-
-{% else %}
-
-<div class="empty">
-
-Пока нет отзывов.
-
-</div>
-
-{% endif %}
-
-</section>
 
 {% endblock %}

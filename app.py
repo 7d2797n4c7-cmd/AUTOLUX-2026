@@ -512,119 +512,68 @@ def catalog(model_id):
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
 
-        UPDATE products
+    SELECT
 
-        SET views=views+1
+        p.id,
+        p.name,
+        p.article,
+        p.description,
+        p.price,
+        p.image,
+        p.stock,
+        p.rating,
+        p.reviews,
+        p.country,
+        p.warranty,
 
-        WHERE id=%s
+        b.name,
+        m.name,
+        c.name,
+        mf.name
+
+    FROM products p
+
+    LEFT JOIN car_brands b
+        ON b.id=p.brand_id
+
+    LEFT JOIN car_models m
+        ON m.id=p.model_id
+
+    LEFT JOIN categories c
+        ON c.id=p.category_id
+
+    LEFT JOIN manufacturers mf
+        ON mf.id=p.manufacturer_id
+
+    WHERE p.id=%s
 
     """,(product_id,))
 
-    conn.commit()
+    product=cur.fetchone()
 
     cur.execute("""
 
-        SELECT *
+    SELECT
 
-        FROM products
+        id,
+        name,
+        image,
+        price,
+        rating
 
-        WHERE id=%s
+    FROM products
 
-    """,(product_id,))
+    WHERE category_id=%s
+    LIMIT 8
 
-    row=cur.fetchone()
+    """,(product[13],))
 
-    if not row:
-
-        conn.close()
-
-        return redirect("/")
-
-    product={
-
-        "id":row[0],
-        "model_id":row[1],
-        "category_id":row[2],
-        "title":row[3],
-        "description":row[4],
-        "brand":row[5],
-        "article":row[6],
-        "image":row[7],
-        "price":row[8],
-        "stock":row[9],
-        "sold":row[10],
-        "views":row[11],
-        "rating":row[12]
-
-    }
-
-    cur.execute("""
-
-        SELECT *
-
-        FROM products
-
-        WHERE model_id=%s
-
-        AND id<>%s
-
-        LIMIT 4
-
-    """,(product["model_id"],product_id))
-
-    rows=cur.fetchall()
-
-    similar=[]
-
-    for r in rows:
-
-        similar.append({
-
-            "id":r[0],
-            "title":r[3],
-            "image":r[7],
-            "price":r[8]
-
-        })
-
-    cur.execute("""
-
-        SELECT
-
-            users.username,
-
-            rating,
-
-            review
-
-        FROM product_reviews
-
-        JOIN users
-
-        ON users.id=product_reviews.user_id
-
-        WHERE product_id=%s
-
-        ORDER BY created_at DESC
-
-    """,(product_id,))
-
-    reviews=[]
-
-    for r in cur.fetchall():
-
-        reviews.append({
-
-            "username":r[0],
-            "rating":r[1],
-            "review":r[2]
-
-        })
+    related=cur.fetchall()
 
     conn.close()
 
@@ -634,9 +583,7 @@ def product(product_id):
 
         product=product,
 
-        similar=similar,
-
-        reviews=reviews
+        related=related
 
     )
     
@@ -648,7 +595,6 @@ def product(product_id):
 def cart():
 
     if "user_id" not in session:
-
         return redirect("/login")
 
     conn=db()
@@ -659,59 +605,28 @@ def cart():
     SELECT
 
         cart.id,
-
-        products.title,
-
+        products.id,
+        products.name,
         products.image,
-
-        products.brand,
-
         products.price,
-
         cart.qty
 
     FROM cart
 
     JOIN products
-
     ON products.id=cart.product_id
 
     WHERE cart.username=%s
 
     """,(session["username"],))
 
-    rows=cur.fetchall()
-
-    cart=[]
+    items=cur.fetchall()
 
     total=0
 
-    count=0
+    for item in items:
 
-    for r in rows:
-
-        s=r[4]*r[5]
-
-        total+=s
-        count+=r[5]
-
-        cart.append({
-
-            "id":r[0],
-
-            "title":r[1],
-
-            "image":r[2],
-
-            "brand":r[3],
-
-            "price":r[4],
-
-            "qty":r[5],
-
-            "total":s
-
-        })
+        total+=item[4]*item[5]
 
     conn.close()
 
@@ -719,11 +634,9 @@ def cart():
 
         "cart.html",
 
-        cart=cart,
+        items=items,
 
-        total=total,
-
-        count=count
+        total=total
 
     )
 
@@ -732,10 +645,9 @@ def cart():
 # ===========================================
 
 @app.route("/cart/add/<int:id>")
-def add_cart(id):
+def add_to_cart(id):
 
     if "user_id" not in session:
-
         return redirect("/login")
 
     conn=db()
@@ -753,9 +665,9 @@ def add_cart(id):
 
     """,(session["username"],id))
 
-    row=cur.fetchone()
+    item=cur.fetchone()
 
-    if row:
+    if item:
 
         cur.execute("""
 
@@ -765,28 +677,29 @@ def add_cart(id):
 
         WHERE id=%s
 
-        """,(row[0],))
+        """,(item[0],))
 
     else:
 
         cur.execute("""
 
-        INSERT INTO cart(
-
+        INSERT INTO cart
+        (
         username,
-
         product_id,
-
         qty
-
         )
 
-        VALUES(%s,%s,1)
+        VALUES
+        (
+        %s,
+        %s,
+        1
+        )
 
         """,(session["username"],id))
 
     conn.commit()
-
     conn.close()
 
     return redirect("/cart")
@@ -796,26 +709,19 @@ def add_cart(id):
 # REMOVE CART
 # ===========================================
 
-@app.route("/remove-cart/<int:id>")
+@app.route("/cart/remove/<int:id>")
 def remove_cart(id):
 
-    if "user_id" not in session:
-        return redirect("/login")
-
-    conn = db()
-    cur = conn.cursor()
+    conn=db()
+    cur=conn.cursor()
 
     cur.execute("""
 
-        DELETE FROM cart
+    DELETE FROM cart
 
-        WHERE id=%s
+    WHERE id=%s
 
-    """, (
-
-        id,
-
-    ))
+    """,(id,))
 
     conn.commit()
     conn.close()
@@ -833,52 +739,44 @@ def profile():
     if "user_id" not in session:
         return redirect("/login")
 
-    conn = db()
-    cur = conn.cursor()
+    conn=db()
+    cur=conn.cursor()
 
     cur.execute("""
-        SELECT
-            username,
-            email,
-            phone,
-            avatar,
-            created_at
-        FROM users
-        WHERE id=%s
+
+    SELECT
+
+        username,
+        email,
+        phone,
+        avatar,
+        created_at
+
+    FROM users
+
+    WHERE id=%s
+
     """,(session["user_id"],))
 
-    user = cur.fetchone()
+    user=cur.fetchone()
 
     cur.execute("""
-        SELECT
 
-            orders.id,
-            order_statuses.name,
-            order_statuses.color,
-            orders.total_price,
-            orders.created_at
+    SELECT
 
-        FROM orders
+        id,
+        total_price,
+        created_at
 
-        JOIN order_statuses
-        ON order_statuses.id = orders.status_id
+    FROM orders
 
-        WHERE orders.user_id=%s
+    WHERE user_id=%s
 
-        ORDER BY orders.created_at DESC
+    ORDER BY id DESC
+
     """,(session["user_id"],))
 
-    orders = cur.fetchall()
-
-    cur.execute("""
-        SELECT
-            COUNT(*),
-            COALESCE(SUM(total_price),0)
-        FROM orders
-        WHERE user_id=%s
-    """,(session["user_id"],))
-
-    stats = cur.fetchone()
+    orders=cur.fetchall()
 
     conn.close()
 
@@ -888,12 +786,9 @@ def profile():
 
         user=user,
 
-        orders=orders,
-
-        stats=stats
+        orders=orders
 
     )
-
 
 # ===========================================
 # ORDER DETAILS
@@ -1873,7 +1768,6 @@ def admin_logs():
 def checkout():
 
     if "user_id" not in session:
-
         return redirect("/login")
 
     conn=db()
@@ -1881,21 +1775,20 @@ def checkout():
 
     if request.method=="POST":
 
-        city=request.form["city"]
-        payment=request.form["payment"]
-
-        full_name=request.form["full_name"]
+        fullname=request.form["fullname"]
         phone=request.form["phone"]
+        city=request.form["city"]
         address=request.form["address"]
         comment=request.form["comment"]
+        payment=request.form["payment"]
 
         cur.execute("""
 
         SELECT
 
-        cart.product_id,
-        cart.qty,
-        products.price
+            cart.product_id,
+            cart.qty,
+            products.price
 
         FROM cart
 
@@ -1903,7 +1796,7 @@ def checkout():
 
         ON products.id=cart.product_id
 
-        WHERE username=%s
+        WHERE cart.username=%s
 
         """,(session["username"],))
 
@@ -1917,53 +1810,38 @@ def checkout():
 
         cur.execute("""
 
-        INSERT INTO orders(
+        INSERT INTO orders
+        (
 
-        user_id,
-
-        status_id,
-
-        city_id,
-
-        payment_method_id,
-
-        full_name,
-
-        phone,
-
-        address,
-
-        comment,
-
-        total_price
+            user_id,
+            full_name,
+            phone,
+            address,
+            comment,
+            total_price
 
         )
 
-        VALUES(
-
-        %s,1,%s,%s,%s,%s,%s,%s,%s
-
+        VALUES
+        (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
         )
 
         RETURNING id
 
         """,(
 
-        session["user_id"],
-
-        city,
-
-        payment,
-
-        full_name,
-
-        phone,
-
-        address,
-
-        comment,
-
-        total
+            session["user_id"],
+            fullname,
+            phone,
+            address,
+            comment,
+            total
 
         ))
 
@@ -1973,51 +1851,32 @@ def checkout():
 
             cur.execute("""
 
-            INSERT INTO order_items(
+            INSERT INTO order_items
+            (
 
-            order_id,
-
-            product_id,
-
-            quantity,
-
-            price
+                order_id,
+                product_id,
+                quantity,
+                price
 
             )
 
-            VALUES(%s,%s,%s,%s)
+            VALUES
+            (
+
+                %s,
+                %s,
+                %s,
+                %s
+
+            )
 
             """,(
 
-            order_id,
-
-            item[0],
-
-            item[1],
-
-            item[2]
-
-            ))
-
-            cur.execute("""
-
-            UPDATE products
-
-            SET
-
-            sold=sold+%s,
-
-            stock=stock-%s
-
-            WHERE id=%s
-
-            """,(
-
-            item[1],
-
-            item[1],
-
-            item[0]
+                order_id,
+                item[0],
+                item[1],
+                item[2]
 
             ))
 
@@ -2031,77 +1890,15 @@ def checkout():
 
         conn.commit()
 
+        flash("Заказ успешно оформлен!")
+
         conn.close()
 
         return redirect("/profile")
 
-    cur.execute("""
-
-    SELECT
-
-    id,
-    name,
-    delivery_price
-
-    FROM delivery_cities
-
-    ORDER BY name
-
-    """)
-
-    cities=cur.fetchall()
-
-    cur.execute("""
-
-    SELECT
-
-    id,
-    name
-
-    FROM payment_methods
-
-    """)
-
-    payments=cur.fetchall()
-
-    cur.execute("""
-
-    SELECT
-
-    SUM(products.price*cart.qty),
-
-    SUM(cart.qty)
-
-    FROM cart
-
-    JOIN products
-
-    ON products.id=cart.product_id
-
-    WHERE username=%s
-
-    """,(session["username"],))
-
-    row=cur.fetchone()
-
-    total=row[0] or 0
-    count=row[1] or 0
-
     conn.close()
 
-    return render_template(
-
-    "checkout.html",
-
-    cities=cities,
-
-    payments=payments,
-
-    total=total,
-
-    count=count
-
-    )
+    return render_template("checkout.html")
     
     
 @app.route("/admin/order/<int:order_id>")

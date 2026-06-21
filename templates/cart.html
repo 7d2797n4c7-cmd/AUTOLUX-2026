@@ -2,113 +2,92 @@
 
 {% block content %}
 
-<section class="page-header">
-
-<h1>
+<h1 class="page-title">
 
 Корзина
 
 </h1>
 
-<p>
+{% if items %}
 
-Проверьте товары перед оформлением заказа
+<table class="cart-table">
 
-</p>
+<tr>
 
-</section>
+<th></th>
 
-{% if cart %}
+<th>Товар</th>
 
-<div class="cart-layout">
+<th>Цена</th>
 
-<div class="cart-items">
+<th>Количество</th>
 
-{% for item in cart %}
+<th>Сумма</th>
 
-<div class="cart-item">
+<th></th>
 
-<div class="cart-image">
+</tr>
 
-<img src="{{ item.image }}">
+{% for item in items %}
 
-</div>
+<tr>
 
-<div class="cart-info">
+<td>
 
-<h2>
+<img
+class="cart-image"
+src="{{ url_for('static', filename='products/' + item[3]) }}"
+onerror="this.src='https://placehold.co/120x120?text=AUTOLUX'">
 
-{{ item.title }}
+</td>
 
-</h2>
+<td>
 
-<p>
+<b>
 
-{{ item.brand }}
+{{ item[2] }}
 
-</p>
+</b>
 
-<div class="cart-price">
+</td>
 
-{{ item.price }} ₸
+<td>
 
-</div>
+{{ "{:,.0f}".format(item[4]).replace(","," ") }} ₸
 
-</div>
+</td>
 
-<div class="cart-qty">
+<td>
+
+{{ item[5] }}
+
+</td>
+
+<td>
+
+{{ "{:,.0f}".format(item[4]*item[5]).replace(","," ") }} ₸
+
+</td>
+
+<td>
 
 <a
+class="delete-btn"
+href="/cart/remove/{{ item[0] }}">
 
-href="/cart/minus/{{ item.id }}"
-
-class="qty-btn">
-
-−
+Удалить
 
 </a>
 
-<span>
+</td>
 
-{{ item.qty }}
-
-</span>
-
-<a
-
-href="/cart/plus/{{ item.id }}"
-
-class="qty-btn">
-
-+
-
-</a>
-
-</div>
-
-<div class="cart-total">
-
-{{ item.total }} ₸
-
-</div>
-
-<a
-
-href="/cart/delete/{{ item.id }}"
-
-class="delete-btn">
-
-🗑
-
-</a>
-
-</div>
+</tr>
 
 {% endfor %}
 
-</div>
+</table>
 
-<div class="checkout-box">
+<div class="cart-total">
 
 <h2>
 
@@ -116,67 +95,15 @@ class="delete-btn">
 
 </h2>
 
-<div class="checkout-line">
+<h1>
 
-<span>
+{{ "{:,.0f}".format(total).replace(","," ") }} ₸
 
-Товаров
-
-</span>
-
-<span>
-
-{{ count }}
-
-</span>
-
-</div>
-
-<div class="checkout-line">
-
-<span>
-
-Стоимость
-
-</span>
-
-<span>
-
-{{ total }} ₸
-
-</span>
-
-</div>
-
-<div class="checkout-line">
-
-<span>
-
-Доставка
-
-</span>
-
-<span>
-
-Бесплатно
-
-</span>
-
-</div>
-
-<hr>
-
-<div class="checkout-total">
-
-{{ total }} ₸
-
-</div>
+</h1>
 
 <a
-
-href="/checkout"
-
-class="btn glow">
+class="buy-btn"
+href="/checkout">
 
 Оформить заказ
 
@@ -184,31 +111,27 @@ class="btn glow">
 
 </div>
 
-</div>
-
 {% else %}
 
 <div class="empty-cart">
 
-🛒
+<i class="bi bi-cart-x"></i>
 
 <h2>
 
-Корзина пуста
+Корзина пустая
 
 </h2>
 
 <p>
 
-Добавьте товары в корзину
+Добавьте товары в корзину.
 
 </p>
 
 <a
-
-href="/brands"
-
-class="btn">
+class="catalog-btn"
+href="/brands">
 
 Перейти в каталог
 
