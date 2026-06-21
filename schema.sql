@@ -315,6 +315,57 @@ INSERT INTO categories(name) VALUES
 ('Оптика'),
 ('Сцепление'),
 ('Аксессуары');
+INSERT INTO categories(name)
+SELECT 'Жидкость ГУР'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Жидкость ГУР');
+
+INSERT INTO categories(name)
+SELECT 'Стойки стабилизатора'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Стойки стабилизатора');
+
+INSERT INTO categories(name)
+SELECT 'Шаровые опоры'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Шаровые опоры');
+
+INSERT INTO categories(name)
+SELECT 'Рулевые наконечники'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Рулевые наконечники');
+
+INSERT INTO categories(name)
+SELECT 'Сайлентблоки'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Сайлентблоки');
+
+INSERT INTO categories(name)
+SELECT 'Генераторы'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Генераторы');
+
+INSERT INTO categories(name)
+SELECT 'Стартеры'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Стартеры');
+
+INSERT INTO categories(name)
+SELECT 'Лампы'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Лампы');
+
+INSERT INTO categories(name)
+SELECT 'Бамперы'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Бамперы');
+
+INSERT INTO categories(name)
+SELECT 'Капоты'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Капоты');
+
+INSERT INTO categories(name)
+SELECT 'Фары'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Фары');
+
+INSERT INTO categories(name)
+SELECT 'Фонари'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Фонари');
+
+INSERT INTO categories(name)
+SELECT 'Решетки радиатора'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE name='Решетки радиатора');
 INSERT INTO manufacturers(name,logo) VALUES
 
 ('Bosch','bosch.webp'),
@@ -444,6 +495,29 @@ INSERT INTO car_brands(name,image) VALUES
 ('Jaecoo','jaecoo.webp'),
 ('Hongqi','hongqi.webp'),
 ('Lynk & Co','lynkco.webp');
+INSERT INTO manufacturers(name,logo)
+SELECT 'Zimmermann','zimmermann.webp'
+WHERE NOT EXISTS (SELECT 1 FROM manufacturers WHERE name='Zimmermann');
+
+INSERT INTO manufacturers(name,logo)
+SELECT 'Mutlu','mutlu.webp'
+WHERE NOT EXISTS (SELECT 1 FROM manufacturers WHERE name='Mutlu');
+
+INSERT INTO manufacturers(name,logo)
+SELECT 'OEM','oem.webp'
+WHERE NOT EXISTS (SELECT 1 FROM manufacturers WHERE name='OEM');
+
+INSERT INTO manufacturers(name,logo)
+SELECT 'CTR','ctr.webp'
+WHERE NOT EXISTS (SELECT 1 FROM manufacturers WHERE name='CTR');
+
+INSERT INTO manufacturers(name,logo)
+SELECT '555','555.webp'
+WHERE NOT EXISTS (SELECT 1 FROM manufacturers WHERE name='555');
+
+INSERT INTO manufacturers(name,logo)
+SELECT 'Febest','febest.webp'
+WHERE NOT EXISTS (SELECT 1 FROM manufacturers WHERE name='Febest');
 /* ---------------- TOYOTA ---------------- */
 
 INSERT INTO car_models(brand_id,name)
@@ -2386,3 +2460,218 @@ ON mfr.name='OEM'
 
 JOIN categories c
 ON c.name='Решетки радиатора';
+INSERT INTO car_models(brand_id,name)
+SELECT id,'Базовая модель'
+FROM car_brands;
+
+INSERT INTO car_models(brand_id,name)
+SELECT id,'Premium'
+FROM car_brands;
+
+INSERT INTO car_models(brand_id,name)
+SELECT id,'Sport'
+FROM car_brands;
+INSERT INTO products
+(
+manufacturer_id,
+category_id,
+brand_id,
+model_id,
+article,
+name,
+description,
+image,
+price,
+stock
+)
+
+SELECT
+
+1,
+1,
+brand_id,
+id,
+
+'OIL-'||id,
+
+'Моторное масло 5W30',
+
+'Оригинальное моторное масло',
+
+'oil.webp',
+
+19990,
+
+50
+
+FROM car_models;
+INSERT INTO products
+(
+manufacturer_id,
+category_id,
+brand_id,
+model_id,
+article,
+name,
+description,
+image,
+price,
+stock
+)
+
+SELECT
+
+2,
+6,
+brand_id,
+id,
+
+'FILTER-'||id,
+
+'Масляный фильтр',
+
+'Оригинальный масляный фильтр',
+
+'filter.webp',
+
+5990,
+
+30
+
+FROM car_models;
+INSERT INTO products
+(
+manufacturer_id,
+category_id,
+brand_id,
+model_id,
+article,
+name,
+description,
+image,
+price,
+stock
+)
+
+SELECT
+
+11,
+10,
+brand_id,
+id,
+
+'SPARK-'||id,
+
+'Свеча зажигания',
+
+'Оригинальная свеча',
+
+'spark.webp',
+
+3490,
+
+40
+
+FROM car_models;
+INSERT INTO products
+(
+manufacturer_id,
+category_id,
+brand_id,
+model_id,
+article,
+name,
+description,
+image,
+price,
+stock
+)
+
+SELECT
+
+2,
+13,
+brand_id,
+id,
+
+'BRAKE-'||id,
+
+'Тормозные колодки',
+
+'Комплект тормозных колодок',
+
+'brakepads.webp',
+
+11990,
+
+20
+
+FROM car_models;
+INSERT INTO products
+(
+manufacturer_id,
+category_id,
+brand_id,
+model_id,
+article,
+name,
+description,
+image,
+price,
+stock
+)
+
+SELECT
+
+26,
+3,
+brand_id,
+id,
+
+'ANTI-'||id,
+
+'Антифриз G12',
+
+'Концентрат G12',
+
+'antifreeze.webp',
+
+6990,
+
+35
+
+FROM car_models;
+INSERT INTO products
+(
+manufacturer_id,
+category_id,
+brand_id,
+model_id,
+article,
+name,
+description,
+image,
+price,
+stock
+)
+
+SELECT
+
+43,
+12,
+brand_id,
+id,
+
+'BAT-'||id,
+
+'Аккумулятор 70Ah',
+
+'Автомобильный аккумулятор',
+
+'battery.webp',
+
+45990,
+
+10
+
+FROM car_models;
