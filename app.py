@@ -2252,6 +2252,52 @@ def admin_change_status(order_id):
 # ===========================================
 
 init_database()
+def execute_if_not_exists(check_sql, insert_sql):
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    conn = db()
+    cur = conn.cursor()
+
+    cur.execute(check_sql)
+
+    exists = cur.fetchone()[0]
+
+    if not exists:
+
+        print("Добавляю новые данные...")
+
+        cur.execute(insert_sql)
+
+        conn.commit()
+
+    cur.close()
+    conn.close()
+    def update_database():
+
+    execute_if_not_exists(
+
+        "SELECT EXISTS(SELECT 1 FROM car_brands WHERE name='Tesla')",
+
+        """
+
+        INSERT INTO car_brands(name,image) VALUES
+
+        ('Tesla','tesla.webp'),
+        ('BYD','byd.webp'),
+        ('Zeekr','zeekr.webp'),
+        ('Voyah','voyah.webp'),
+        ('Omoda','omoda.webp'),
+        ('Jaecoo','jaecoo.webp'),
+        ('Jetour','jetour.webp'),
+        ('Exeed','exeed.webp');
+
+        """
+
+    init_database()
+update_database()
+
+if __name__=="__main__":
+
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT",5000))
+    )
