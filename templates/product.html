@@ -174,8 +174,9 @@ onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 
 <a href="/product/{{ item[0] }}">
 
-<img src="{{ url_for('static', filename='products/' + item[2]) }}"
-onerror="this.src='https://placehold.co/300x300?text=AUTOLUX'">
+<img
+src="{{ url_for('static', filename='images/products/' ~ p[3]) }}"
+onerror="this.src='{{ url_for('static', filename='images/no-image.png') }}'">
 
 <h3>
 
