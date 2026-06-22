@@ -194,29 +194,13 @@ AUTOLUX CRM
 
 <tr>
 
-<td>
+<td>#{{ o[0] }}</td>
 
-#{{ o.id }}
+<td>{{ o[1] }}</td>
 
-</td>
+<td>{{ "{:,.0f}".format(o[2]).replace(",", " ") }} ₸</td>
 
-<td>
-
-{{ o.full_name }}
-
-</td>
-
-<td>
-
-{{ o.total_price }} ₸
-
-</td>
-
-<td>
-
-{{ o.status }}
-
-</td>
+<td>{{ o[3] }}</td>
 
 </tr>
 
