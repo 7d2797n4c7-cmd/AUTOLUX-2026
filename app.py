@@ -574,89 +574,86 @@ def cart():
     if "user_id" not in session:
         return redirect("/login")
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
+        SELECT
+            c.id,
+            p.id,
+            p.title,
+            p.image,
+            p.price,
+            c.qty
+        FROM cart c
+        JOIN products p
+        ON p.id = c.product_id
+        WHERE c.username=%s
+    """,(session["username"],))
 
-SELECT
+    items = cur.fetchall()
 
-    cart.id,
-    products.id,
-    products.title,
-    products.image,
-    products.price,
-    cart.qty
+    total = sum(item[4] * item[5] for item in items)
 
-FROM cart
+    cur.close()
+    conn.close()
 
-JOIN products
-ON products.id = cart.product_id
-
-WHERE cart.username=%s
-
-""",(session["username"],))
+    return render_template(
+        "cart.html",
+        items=items,
+        total=total
+    )
 
 # ===========================================
 # ADD TO CART
 # ===========================================
 
-@app.route("/cart/add/<int:id>")
-def add_to_cart(id):
+@app.route("/cart/add/<int:product_id>")
+def add_to_cart(product_id):
 
     if "user_id" not in session:
         return redirect("/login")
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
+        SELECT id, qty
+        FROM cart
+        WHERE username=%s
+        AND product_id=%s
+    """,(session["username"], product_id))
 
-    SELECT id
-
-    FROM cart
-
-    WHERE username=%s
-
-    AND product_id=%s
-
-    """,(session["username"],id))
-
-    item=cur.fetchone()
+    item = cur.fetchone()
 
     if item:
 
         cur.execute("""
-
-        UPDATE cart
-
-        SET qty=qty+1
-
-        WHERE id=%s
-
+            UPDATE cart
+            SET qty=qty+1
+            WHERE id=%s
         """,(item[0],))
 
     else:
 
         cur.execute("""
-
-        INSERT INTO cart
-        (
-        username,
-        product_id,
-        qty
-        )
-
-        VALUES
-        (
-        %s,
-        %s,
-        1
-        )
-
-        """,(session["username"],id))
+            INSERT INTO cart
+            (
+                username,
+                product_id,
+                qty
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                1
+            )
+        """,(session["username"], product_id))
 
     conn.commit()
+
+    cur.close()
     conn.close()
 
     return redirect("/cart")
