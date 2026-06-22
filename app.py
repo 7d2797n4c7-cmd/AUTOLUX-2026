@@ -177,18 +177,20 @@ def home():
 
     brands = cur.fetchall()
 
-    cur.execute("""
-        SELECT
-            id,
-            title,
-            price,
-            image,
-            brand,
-            rating
-        FROM products
-        ORDER BY sold DESC
-        LIMIT 8
-    """)
+   cur.execute("""
+SELECT
+    p.id,
+    p.name,
+    p.price,
+    p.image,
+    m.name,
+    p.rating
+FROM products p
+LEFT JOIN manufacturers m
+ON m.id=p.manufacturer_id
+ORDER BY p.sold DESC
+LIMIT 8
+""")
 
     popular_products = cur.fetchall()
 
@@ -453,15 +455,21 @@ def catalog(model_id):
 
         cur.execute("""
 
-            SELECT *
-
-            FROM products
-
-            WHERE model_id=%s
-
-            AND LOWER(title) LIKE LOWER(%s)
-
-            ORDER BY title
+            SELECT
+p.id,
+p.name,
+p.description,
+p.image,
+p.price,
+p.stock,
+p.rating,
+m.name
+FROM products p
+LEFT JOIN manufacturers m
+ON m.id=p.manufacturer_id
+WHERE p.model_id=%s
+AND LOWER(p.name) LIKE LOWER(%s)
+ORDER BY p.name
 
         """,(model_id,"%"+search+"%"))
 
