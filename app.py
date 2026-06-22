@@ -532,19 +532,7 @@ def product(product_id):
     """, (product_id,))
 
     product = cur.fetchone()
-    cur.execute("""
-SELECT
-    id,
-    name,
-    description,
-    price,
-    image
-FROM products
-WHERE id<>%s
-LIMIT 4
-""", (product_id,))
-
-related = cur.fetchall()
+    
 
     cur.close()
     conn.close()
