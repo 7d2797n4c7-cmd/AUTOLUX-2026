@@ -619,7 +619,7 @@ def add_to_cart(product_id):
 
         cur.execute("""
             UPDATE cart
-            SET quantity = quantity + 1
+            SET quantity=quantity+1
             WHERE id=%s
         """, (item[0],))
 
