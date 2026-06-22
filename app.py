@@ -579,43 +579,23 @@ def cart():
 
     cur.execute("""
 
-    SELECT
+SELECT
 
-        cart.id,
-        products.id,
-        products.name,
-        products.image,
-        products.price,
-        cart.qty
+    cart.id,
+    products.id,
+    products.title,
+    products.image,
+    products.price,
+    cart.qty
 
-    FROM cart
+FROM cart
 
-    JOIN products
-    ON products.id=cart.product_id
+JOIN products
+ON products.id = cart.product_id
 
-    WHERE cart.username=%s
+WHERE cart.username=%s
 
-    """,(session["username"],))
-
-    items=cur.fetchall()
-
-    total=0
-
-    for item in items:
-
-        total+=item[4]*item[5]
-
-    conn.close()
-
-    return render_template(
-
-        "cart.html",
-
-        items=items,
-
-        total=total
-
-    )
+""",(session["username"],))
 
 # ===========================================
 # ADD TO CART
@@ -1783,7 +1763,7 @@ def checkout():
 
         for item in items:
 
-            total+=item[1]*item[2]
+            total+=item[4]*item[5]
 
         cur.execute("""
 
