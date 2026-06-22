@@ -35,9 +35,9 @@
 <td>
 
 <img
-class="cart-image"
-src="{{ url_for('static', filename='products/' + item[3]) }}"
-onerror="this.src='https://placehold.co/120x120?text=AUTOLUX'">
+    class="cart-image"
+    src="{{ url_for('static', filename='images/products/' ~ item[3]) }}"
+    onerror="this.src='/static/images/no-image.png';">
 
 </td>
 

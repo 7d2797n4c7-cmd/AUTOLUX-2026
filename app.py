@@ -1732,50 +1732,38 @@ def checkout():
 
     if request.method == "POST":
 
-        fullname = request.form["fullname"]
-        phone = request.form["phone"]
-        city = request.form["city"]
-        address = request.form["address"]
-        comment = request.form["comment"]
-        payment = request.form["payment"]
-
-        # Получаем товары из корзины
-
         cur.execute("""
             SELECT
-                cart.product_id,
-                cart.quantity,
-                products.price
+                product_id,
+                quantity,
+                p.price
             FROM cart
-            JOIN products
-                ON products.id = cart.product_id
-            WHERE cart.user_id = %s
+            JOIN products p
+                ON p.id = cart.product_id
+            WHERE user_id=%s
         """, (session["user_id"],))
 
         items = cur.fetchall()
+
+        if not items:
+            flash("Корзина пуста.")
+            conn.close()
+            return redirect("/cart")
 
         total = 0
 
         for item in items:
             total += item[1] * item[2]
 
-        # Создаем заказ
-
         cur.execute("""
             INSERT INTO orders
             (
                 user_id,
-                full_name,
-                phone,
-                address,
-                comment,
-                total_price
+                total,
+                status
             )
             VALUES
             (
-                %s,
-                %s,
-                %s,
                 %s,
                 %s,
                 %s
@@ -1783,16 +1771,11 @@ def checkout():
             RETURNING id
         """, (
             session["user_id"],
-            fullname,
-            phone,
-            address,
-            comment,
-            total
+            total,
+            "Новый"
         ))
 
         order_id = cur.fetchone()[0]
-
-        # Добавляем товары заказа
 
         for item in items:
 
@@ -1818,11 +1801,9 @@ def checkout():
                 item[2]
             ))
 
-        # Очищаем корзину
-
         cur.execute("""
             DELETE FROM cart
-            WHERE user_id = %s
+            WHERE user_id=%s
         """, (session["user_id"],))
 
         conn.commit()
@@ -1834,7 +1815,6 @@ def checkout():
 
         return redirect("/profile")
 
-    cur.close()
     conn.close()
 
     return render_template("checkout.html")
