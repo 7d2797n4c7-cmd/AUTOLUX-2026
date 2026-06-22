@@ -691,15 +691,15 @@ def profile():
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT
-            id,
-            total,
-            status,
-            created_at
-        FROM orders
-        WHERE user_id=%s
-        ORDER BY created_at DESC
-    """, (session["user_id"],))
+SELECT
+    id,
+    total_price,
+    status,
+    created_at
+FROM orders
+WHERE user_id=%s
+ORDER BY created_at DESC
+""",(session["user_id"],))
 
     orders = cur.fetchall()
 
