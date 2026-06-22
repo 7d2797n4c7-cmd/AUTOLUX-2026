@@ -1689,20 +1689,21 @@ def checkout():
     if request.method == "POST":
 
         cur.execute("""
-SELECT
-    cart.product_id,
-    cart.qty,
-    products.price
-FROM cart
-JOIN products
-ON products.id = cart.product_id
-WHERE cart.username=%s
-""", (session["username"],))
+            SELECT
+                cart.product_id,
+                cart.qty,
+                products.price
+            FROM cart
+            JOIN products
+                ON products.id = cart.product_id
+            WHERE cart.username=%s
+        """, (session["username"],))
 
         items = cur.fetchall()
 
         if not items:
             flash("Корзина пуста.")
+            cur.close()
             conn.close()
             return redirect("/cart")
 
@@ -1712,34 +1713,24 @@ WHERE cart.username=%s
             total += item[1] * item[2]
 
         cur.execute("""
-
-INSERT INTO orders
-(
-
-    user_id,
-    total,
-    status
-
-)
-
-VALUES
-(
-
-    %s,
-    %s,
-    %s
-
-)
-
-RETURNING id
-
-""",(
-
-    session["user_id"],
-    total,
-    "Новый"
-
-))
+            INSERT INTO orders
+            (
+                user_id,
+                total_price,
+                status_id
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                %s
+            )
+            RETURNING id
+        """, (
+            session["user_id"],
+            total,
+            1
+        ))
 
         order_id = cur.fetchone()[0]
 
@@ -1750,7 +1741,7 @@ RETURNING id
                 (
                     order_id,
                     product_id,
-                    qty,
+                    quantity,
                     price
                 )
                 VALUES
@@ -1767,10 +1758,10 @@ RETURNING id
                 item[2]
             ))
 
-       cur.execute("""
-DELETE FROM cart
-WHERE username=%s
-""", (session["username"],))
+        cur.execute("""
+            DELETE FROM cart
+            WHERE username=%s
+        """, (session["username"],))
 
         conn.commit()
 
@@ -1781,6 +1772,7 @@ WHERE username=%s
 
         return redirect("/profile")
 
+    cur.close()
     conn.close()
 
     return render_template("checkout.html")
