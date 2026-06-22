@@ -500,20 +500,17 @@ def product(product_id):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT
-            p.id,
-            p.name,
-            p.description,
-            p.image,
-            p.price,
-            p.stock,
-            p.rating,
-            m.name
-        FROM products p
-        LEFT JOIN manufacturers m
-        ON p.manufacturer_id=m.id
-        WHERE p.id=%s
-    """,(product_id,))
+SELECT
+    id,
+    title,
+    description,
+    image,
+    price,
+    stock,
+    rating
+FROM products
+WHERE id=%s
+""", (product_id,))
 
     product=cur.fetchone()
 
