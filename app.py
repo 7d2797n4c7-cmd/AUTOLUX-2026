@@ -495,16 +495,6 @@ def catalog(model_id):
 # PRODUCT
 # ===========================================
 
-products = cur.fetchall()
-
-conn.close()
-
-return render_template(
-    "catalog.html",
-    products=products,
-    model_name=model_name
-)
-
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
