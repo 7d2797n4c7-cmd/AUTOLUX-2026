@@ -37,7 +37,9 @@
 
     <div class="product-image">
 
-        <img src="{{ p[7] }}">
+        <img
+        src="{{ url_for('static', filename='images/products/' ~ p[3]) }}"
+        onerror="this.src='{{ url_for('static', filename='images/no-image.png') }}'">
 
     </div>
 
@@ -45,9 +47,75 @@
 
         <div class="product-brand">
 
-            {{ p[5] }}
+            {{ p[7] }}
 
         </div>
+
+        <h2>
+
+            {{ p[1] }}
+
+        </h2>
+
+        <p>
+
+            {{ p[2] }}
+
+        </p>
+
+        <div class="product-rating">
+
+            ⭐ {{ p[6] }}
+
+        </div>
+
+        <div class="product-stock">
+
+            {% if p[5] > 0 %}
+
+                ✅ В наличии
+
+            {% else %}
+
+                ❌ Нет в наличии
+
+            {% endif %}
+
+        </div>
+
+        <div class="product-price">
+
+            {{ p[4] }} ₸
+
+        </div>
+
+        <div class="product-buttons">
+
+            <a
+            href="/product/{{ p[0] }}"
+            class="btn">
+
+                Подробнее
+
+            </a>
+
+            <a
+            href="/buy/{{ p[0] }}"
+            class="btn btn-gold">
+
+                Купить
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
 
         <h2>
 
