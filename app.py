@@ -496,34 +496,41 @@ ORDER BY p.name
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
-    SELECT
-    id,
-    name,
-    description,
-    image,
-    price,
-    stock,
-    rating,
-    article
-    FROM products
-    WHERE id=%s
+        SELECT
+            p.id,
+            p.name,
+            p.description,
+            p.image,
+            p.price,
+            p.stock,
+            p.rating,
+            m.name
+        FROM products p
+        LEFT JOIN manufacturers m
+        ON p.manufacturer_id=m.id
+        WHERE p.id=%s
     """,(product_id,))
 
     product=cur.fetchone()
 
+    if not product:
+        conn.close()
+        return "Товар не найден",404
+
     cur.execute("""
-    SELECT
-    id,
-    name,
-    image,
-    price
-    FROM products
-    WHERE id<>%s
-    LIMIT 4
+        SELECT
+            p.id,
+            p.name,
+            p.image,
+            p.price,
+            p.rating
+        FROM products p
+        WHERE p.id<>%s
+        LIMIT 4
     """,(product_id,))
 
     related=cur.fetchall()
