@@ -574,8 +574,8 @@ def cart():
         FROM cart c
         JOIN products p
             ON p.id = c.product_id
-        WHERE c.user_id=%s
-    """, (session["user_id"],))
+        WHERE c.username=%s
+    """, (session["username"],))
 
     items = cur.fetchall()
 
@@ -592,7 +592,6 @@ def cart():
         items=items,
         total=total
     )
-
 # ===========================================
 # ADD TO CART
 # ===========================================
@@ -609,9 +608,9 @@ def add_to_cart(product_id):
     cur.execute("""
         SELECT id, qty
         FROM cart
-        WHERE user_id=%s
+        WHERE username=%s
         AND product_id=%s
-    """, (session["user_id"], product_id))
+    """, (session["username"], product_id))
 
     item = cur.fetchone()
 
@@ -619,7 +618,7 @@ def add_to_cart(product_id):
 
         cur.execute("""
             UPDATE cart
-            SET qty=qty+1
+            SET qty = qty + 1
             WHERE id=%s
         """, (item[0],))
 
@@ -628,7 +627,7 @@ def add_to_cart(product_id):
         cur.execute("""
             INSERT INTO cart
             (
-                user_id,
+                username,
                 product_id,
                 qty
             )
@@ -638,7 +637,7 @@ def add_to_cart(product_id):
                 %s,
                 1
             )
-        """, (session["user_id"], product_id))
+        """, (session["username"], product_id))
 
     conn.commit()
 
@@ -655,24 +654,18 @@ def add_to_cart(product_id):
 @app.route("/cart/remove/<int:id>")
 def remove_cart(id):
 
-    if "user_id" not in session:
-        return redirect("/login")
-
     conn = db()
     cur = conn.cursor()
 
     cur.execute("""
         DELETE FROM cart
         WHERE id=%s
-        AND user_id=%s
-    """, (id, session["user_id"]))
+    """, (id,))
 
     conn.commit()
 
     cur.close()
     conn.close()
-
-    flash("Товар удален из корзины.")
 
     return redirect("/cart")
 
