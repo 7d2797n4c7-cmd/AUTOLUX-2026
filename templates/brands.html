@@ -33,7 +33,9 @@ class="brand-card glow"
 
 <div class="brand-logo">
 
-src="{{ url_for('static', filename='images/brands/' ~ brand[2]) }}"
+    <img
+        src="{{ url_for('static', filename='images/brands/' ~ brand[2]) }}"
+        alt="{{ brand[1] }}">
 
 </div>
 

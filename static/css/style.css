@@ -4096,6 +4096,19 @@ grid-template-columns:1fr;
 }
 
 }
+.brand-logo{
+    height:120px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.brand-logo img{
+    width:120px;
+    height:120px;
+    object-fit:contain;
+}
 
 /* =======================================================
 END
