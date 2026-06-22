@@ -135,7 +135,7 @@ margin-bottom:20px;
             <div class="product-image">
 
                 <img
-    src="{{ url_for('static', filename='images/products/' ~ p[3]) }}"
+    src="{{ p[3] }}"
     alt="{{ p[1] }}"
     onerror="this.src='/static/images/no-image.png'">
             </div>

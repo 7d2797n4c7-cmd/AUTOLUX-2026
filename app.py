@@ -191,6 +191,17 @@ def home():
     """)
 
     popular_products = cur.fetchall()
+    popular_products = [
+(
+p[0],
+p[1],
+p[2],
+"/static/images/products/" + (p[3] if p[3] else "no-image.png"),
+p[4],
+p[5]
+)
+for p in popular_products
+]
 
     conn.close()
 
@@ -485,6 +496,20 @@ def catalog(model_id):
         """)
 
     products = cur.fetchall()
+    products = [
+(
+p[0],
+p[1],
+p[2],
+"/static/images/products/" + (p[3] if p[3] else "no-image.png"),
+p[4],
+p[5],
+p[6],
+p[7]
+)
+for p in products
+]
+    
 
     cur.close()
     conn.close()
@@ -528,6 +553,13 @@ def product(product_id):
     """,(product_id,))
 
     product = cur.fetchone()
+    if product:
+
+    product = list(product)
+
+    product[3] = "/static/images/products/" + (
+        product[3] if product[3] else "no-image.png"
+    )
 
     if not product:
 
@@ -556,6 +588,16 @@ def product(product_id):
     """,(product_id,))
 
     related = cur.fetchall()
+    related = [
+(
+r[0],
+r[1],
+"/static/images/products/" + (r[2] if r[2] else "no-image.png"),
+r[3],
+r[4]
+)
+for r in related
+]
 
     conn.close()
 
@@ -597,6 +639,18 @@ def cart():
     """, (session["user_id"],))
 
     items = cur.fetchall()
+    items = [
+(
+i[0],
+i[1],
+i[2],
+"/static/images/products/" + (i[3] if i[3] else "no-image.png"),
+i[4],
+i[5]
+)
+for i in items
+]
+    
 
     total = 0
 
