@@ -120,7 +120,7 @@ CREATE TABLE cart(
 
     product_id INTEGER REFERENCES products(id),
 
-    quantity INTEGER DEFAULT 1
+     INTEGER DEFAULT 1
 
 );
 
@@ -162,7 +162,7 @@ CREATE TABLE order_items(
 
     product_id INTEGER REFERENCES products(id),
 
-    quantity INTEGER,
+    qty INTEGER,
 
     price NUMERIC(12,2)
 

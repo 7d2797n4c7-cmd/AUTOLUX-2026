@@ -570,7 +570,7 @@ def cart():
             p.title,
             p.image,
             p.price,
-            c.quantity
+            c.qty
         FROM cart c
         JOIN products p
             ON p.id = c.product_id
@@ -607,7 +607,7 @@ def add_to_cart(product_id):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, quantity
+        SELECT id, qty
         FROM cart
         WHERE user_id=%s
         AND product_id=%s
@@ -619,7 +619,7 @@ def add_to_cart(product_id):
 
         cur.execute("""
             UPDATE cart
-            SET quantity=quantity+1
+            SET qty=qty+1
             WHERE id=%s
         """, (item[0],))
 
@@ -630,7 +630,7 @@ def add_to_cart(product_id):
             (
                 user_id,
                 product_id,
-                quantity
+                qty
             )
             VALUES
             (
@@ -694,7 +694,7 @@ def profile():
 SELECT
     id,
     total_price,
-    status,
+    status_id,
     created_at
 FROM orders
 WHERE user_id=%s
@@ -773,7 +773,7 @@ def order_details(order_id):
 
             products.image,
 
-            order_items.quantity,
+            order_items.qty,
 
             order_items.price
 
@@ -1698,7 +1698,7 @@ def checkout():
         cur.execute("""
             SELECT
                 product_id,
-                quantity,
+                qty,
                 p.price
             FROM cart
             JOIN products p
@@ -1757,7 +1757,7 @@ RETURNING id
                 (
                     order_id,
                     product_id,
-                    quantity,
+                    qty,
                     price
                 )
                 VALUES
@@ -1851,7 +1851,7 @@ def admin_order(order_id):
     SELECT
 
         products.title,
-        order_items.quantity,
+        order_items.qty,
         order_items.price
 
     FROM order_items
@@ -1873,7 +1873,7 @@ def admin_order(order_id):
         items.append({
 
             "title":row[0],
-            "quantity":row[1],
+            "qty":row[1],
             "price":row[2],
             "total":row[1]*row[2]
 
