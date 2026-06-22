@@ -487,12 +487,12 @@ INSERT INTO car_brands(name,image) VALUES
 ('Exeed','exeed.webp'),
 ('Chery','chery.webp'),
 ('Jetour','jetour.webp'),
-('BYD','byd.webp'),
+('BYD','bud.jpg'),
 ('JAC','jac.webp'),
 ('Zeekr','zeekr.webp'),
 ('Voyah','voyah.webp'),
 ('Omoda','omoda.webp'),
-('Jaecoo','jaecoo.webp'),
+('Jaecoo','jaecoo.png'),
 ('Hongqi','hongqi.webp'),
 ('Lynk & Co','lynkco.webp');
 INSERT INTO manufacturers(name,logo)
@@ -2675,3 +2675,45 @@ id,
 10
 
 FROM car_models;
+UPDATE products
+SET image = CASE
+
+WHEN LOWER(title) LIKE '%масло%' THEN 'oil.png'
+WHEN LOWER(title) LIKE '%liqui%' THEN 'oil.png'
+
+WHEN LOWER(title) LIKE '%фильтр%' THEN 'filter.png'
+WHEN LOWER(title) LIKE '%mahle%' THEN 'filter.png'
+
+WHEN LOWER(title) LIKE '%колод%' THEN 'brake.png'
+WHEN LOWER(title) LIKE '%brembo%' THEN 'brake.png'
+
+WHEN LOWER(title) LIKE '%led%' THEN 'led.png'
+
+WHEN LOWER(title) LIKE '%магнитол%' THEN 'android.png'
+
+WHEN LOWER(title) LIKE '%аккумулятор%' THEN 'battery.png'
+
+WHEN LOWER(title) LIKE '%радиатор%' THEN 'radiator.png'
+
+WHEN LOWER(title) LIKE '%амортизатор%' THEN 'shock.png'
+
+WHEN LOWER(title) LIKE '%стартер%' THEN 'starter.png'
+
+WHEN LOWER(title) LIKE '%генератор%' THEN 'alternator.png'
+
+ELSE 'no-image.png'
+
+END;
+DELETE FROM car_models;
+
+INSERT INTO car_models(name,brand_id)
+
+SELECT 'Base',id FROM car_brands
+
+UNION ALL
+
+SELECT 'Premium',id FROM car_brands
+
+UNION ALL
+
+SELECT 'Sport',id FROM car_brands;

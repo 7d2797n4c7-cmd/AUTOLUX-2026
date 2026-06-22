@@ -435,59 +435,64 @@ def catalog(model_id):
     conn = db()
     cur = conn.cursor()
 
+    # Получаем название модели
     cur.execute("""
         SELECT name
         FROM car_models
         WHERE id=%s
-    """,(model_id,))
+    """, (model_id,))
 
-    model_name = cur.fetchone()[0]
+    row = cur.fetchone()
 
-    search = request.args.get("q","")
+    if row:
+        model_name = row[0]
+    else:
+        model_name = "Каталог"
+
+    search = request.args.get("q", "").strip()
 
     if search:
 
         cur.execute("""
-        SELECT
-            id,
-            title,
-            description,
-            image,
-            price,
-            stock,
-            rating,
-            brand
-        FROM products
-        WHERE model_id=%s
-        AND LOWER(title) LIKE LOWER(%s)
-        ORDER BY title
-        """,(model_id,"%"+search+"%"))
+            SELECT
+                id,
+                title,
+                description,
+                image,
+                price,
+                stock,
+                rating,
+                brand
+            FROM products
+            WHERE LOWER(title) LIKE LOWER(%s)
+            ORDER BY title
+        """, ("%" + search + "%",))
 
     else:
 
         cur.execute("""
-        SELECT
-            id,
-            title,
-            description,
-            image,
-            price,
-            stock,
-            rating,
-            brand
-        FROM products
-        WHERE model_id=%s
-        ORDER BY title
-        """,(model_id,))
+            SELECT
+                id,
+                title,
+                description,
+                image,
+                price,
+                stock,
+                rating,
+                brand
+            FROM products
+            ORDER BY title
+        """)
 
     products = cur.fetchall()
 
+    cur.close()
     conn.close()
 
     return render_template(
         "catalog.html",
-        products=products,
-        model_name=model_name
+        model_name=model_name,
+        products=products
     )
 
 
