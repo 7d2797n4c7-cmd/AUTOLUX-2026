@@ -2,55 +2,51 @@
 
 {% block content %}
 
-<h1 class="page-title">
+<section class="page-header">
+
+<h1>
 
 Личный кабинет
 
 </h1>
 
+<p>
+
+Добро пожаловать, {{ session["username"] }}
+
+</p>
+
+</section>
+
 <div class="profile-grid">
 
-<div class="profile-card">
-
-<img
-
-class="avatar"
-
-src="{{ url_for('static', filename='avatar.png') }}"
-
-onerror="this.src='https://placehold.co/200x200?text=USER'">
+<div class="card">
 
 <h2>
 
-{{ user[0] }}
+Пользователь
 
 </h2>
 
 <p>
 
-📧 {{ user[1] }}
+<b>Логин:</b>
+
+{{ session["username"] }}
 
 </p>
 
 <p>
 
-📞 {{ user[2] or "Не указан" }}
+<b>ID:</b>
 
-</p>
-
-<p>
-
-📅 Регистрация
-
-{{ user[4].strftime("%d.%m.%Y") if user[4] }}
+{{ session["user_id"] }}
 
 </p>
 
 <a
-
 href="/logout"
-
-class="catalog-btn">
+class="btn">
 
 Выйти
 
@@ -58,11 +54,11 @@ class="catalog-btn">
 
 </div>
 
-<div>
+<div class="card">
 
 <h2>
 
-История заказов
+Мои заказы
 
 </h2>
 
@@ -73,12 +69,9 @@ class="catalog-btn">
 <tr>
 
 <th>ID</th>
-
 <th>Дата</th>
-
+<th>Статус</th>
 <th>Сумма</th>
-
-<th></th>
 
 </tr>
 
@@ -88,31 +81,25 @@ class="catalog-btn">
 
 <td>
 
-#{{ order[0] }}
+{{ order[0] }}
 
 </td>
 
 <td>
 
-{{ order[2].strftime("%d.%m.%Y") }}
+{{ order[3] }}
 
 </td>
 
 <td>
 
-{{ "{:,.0f}".format(order[1]).replace(","," ") }} ₸
+{{ order[2] }}
 
 </td>
 
 <td>
 
-<a
-
-href="/order/{{ order[0] }}">
-
-Подробнее
-
-</a>
+{{ "{:,.0f}".format(order[1]).replace(",", " ") }} ₸
 
 </td>
 
@@ -124,11 +111,11 @@ href="/order/{{ order[0] }}">
 
 {% else %}
 
-<div class="empty-cart">
+<p>
 
 У вас пока нет заказов.
 
-</div>
+</p>
 
 {% endif %}
 

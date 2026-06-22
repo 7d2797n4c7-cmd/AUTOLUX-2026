@@ -191,17 +191,6 @@ def home():
     """)
 
     popular_products = cur.fetchall()
-    popular_products = [
-(
-p[0],
-p[1],
-p[2],
-"/static/images/products/" + (p[3] if p[3] else "no-image.png"),
-p[4],
-p[5]
-)
-for p in popular_products
-]
 
     conn.close()
 
@@ -446,7 +435,6 @@ def catalog(model_id):
     conn = db()
     cur = conn.cursor()
 
-    # Получаем название модели
     cur.execute("""
         SELECT name
         FROM car_models
@@ -477,7 +465,7 @@ def catalog(model_id):
             FROM products
             WHERE LOWER(title) LIKE LOWER(%s)
             ORDER BY title
-        """, ("%" + search + "%",))
+        """, ("%"+search+"%",))
 
     else:
 
@@ -496,28 +484,14 @@ def catalog(model_id):
         """)
 
     products = cur.fetchall()
-    products = [
-(
-p[0],
-p[1],
-p[2],
-"/static/images/products/" + (p[3] if p[3] else "no-image.png"),
-p[4],
-p[5],
-p[6],
-p[7]
-)
-for p in products
-]
-    
 
     cur.close()
     conn.close()
 
     return render_template(
         "catalog.html",
-        model_name=model_name,
-        products=products
+        products=products,
+        model_name=model_name
     )
 
 
@@ -531,12 +505,8 @@ def product(product_id):
     conn = db()
     cur = conn.cursor()
 
-    # Получаем товар
-
     cur.execute("""
-
         SELECT
-
             id,
             title,
             description,
@@ -545,70 +515,39 @@ def product(product_id):
             stock,
             rating,
             brand
-
         FROM products
-
         WHERE id=%s
-
-    """,(product_id,))
+    """, (product_id,))
 
     product = cur.fetchone()
-    if product:
-
-    product = list(product)
-
-    product[3] = "/static/images/products/" + (
-        product[3] if product[3] else "no-image.png"
-    )
 
     if not product:
-
+        cur.close()
         conn.close()
-
-        return "Товар не найден",404
-
-    # Похожие товары
+        return "Товар не найден", 404
 
     cur.execute("""
-
         SELECT
-
             id,
             title,
             image,
             price,
             rating
-
         FROM products
-
         WHERE id<>%s
-
+        ORDER BY RANDOM()
         LIMIT 4
-
-    """,(product_id,))
+    """, (product_id,))
 
     related = cur.fetchall()
-    related = [
-(
-r[0],
-r[1],
-"/static/images/products/" + (r[2] if r[2] else "no-image.png"),
-r[3],
-r[4]
-)
-for r in related
-]
 
+    cur.close()
     conn.close()
 
     return render_template(
-
         "product.html",
-
         product=product,
-
         related=related
-
     )
     
 # ===========================================
@@ -639,18 +578,6 @@ def cart():
     """, (session["user_id"],))
 
     items = cur.fetchall()
-    items = [
-(
-i[0],
-i[1],
-i[2],
-"/static/images/products/" + (i[3] if i[3] else "no-image.png"),
-i[4],
-i[5]
-)
-for i in items
-]
-    
 
     total = 0
 
@@ -728,19 +655,24 @@ def add_to_cart(product_id):
 @app.route("/cart/remove/<int:id>")
 def remove_cart(id):
 
-    conn=db()
-    cur=conn.cursor()
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
-
-    DELETE FROM cart
-
-    WHERE id=%s
-
-    """,(id,))
+        DELETE FROM cart
+        WHERE id=%s
+        AND user_id=%s
+    """, (id, session["user_id"]))
 
     conn.commit()
+
+    cur.close()
     conn.close()
+
+    flash("Товар удален из корзины.")
 
     return redirect("/cart")
 
@@ -755,55 +687,28 @@ def profile():
     if "user_id" not in session:
         return redirect("/login")
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
-
-    SELECT
-
-        username,
-        email,
-        phone,
-        avatar,
-        created_at
-
-    FROM users
-
-    WHERE id=%s
-
+        SELECT
+            id,
+            total,
+            status,
+            created_at
+        FROM orders
+        WHERE user_id=%s
+        ORDER BY created_at DESC
     """,(session["user_id"],))
 
-    user=cur.fetchone()
+    orders = cur.fetchall()
 
-    cur.execute("""
-
-    SELECT
-
-        id,
-        total_price,
-        created_at
-
-    FROM orders
-
-    WHERE user_id=%s
-
-    ORDER BY id DESC
-
-    """,(session["user_id"],))
-
-    orders=cur.fetchall()
-
+    cur.close()
     conn.close()
 
     return render_template(
-
         "profile.html",
-
-        user=user,
-
         orders=orders
-
     )
 
 # ===========================================
@@ -1815,24 +1720,34 @@ def checkout():
             total += item[1] * item[2]
 
         cur.execute("""
-            INSERT INTO orders
-            (
-                user_id,
-                total,
-                status
-            )
-            VALUES
-            (
-                %s,
-                %s,
-                %s
-            )
-            RETURNING id
-        """, (
-            session["user_id"],
-            total,
-            "Новый"
-        ))
+
+INSERT INTO orders
+(
+
+    user_id,
+    total,
+    status
+
+)
+
+VALUES
+(
+
+    %s,
+    %s,
+    %s
+
+)
+
+RETURNING id
+
+""",(
+
+    session["user_id"],
+    total,
+    "Новый"
+
+))
 
         order_id = cur.fetchone()[0]
 

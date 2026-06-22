@@ -7,9 +7,9 @@
 <div class="product-left">
 
 <img
-class="product-image"
-src="/static/images/products/{{ product[3] }}"
-onerror="this.src='/static/images/no-image.png'">
+class="product-main-image"
+src="{{ url_for('static', filename='images/products/' ~ product[3]) }}"
+onerror="this.src='/static/images/no-image.png';">
 
 </div>
 
@@ -17,7 +17,7 @@ onerror="this.src='/static/images/no-image.png'">
 
 <div class="product-brand">
 
-{{ product[2] }}
+{{ product[7] }}
 
 </div>
 
@@ -33,45 +33,41 @@ onerror="this.src='/static/images/no-image.png'">
 
 </div>
 
-<div class="price">
-
-{{ "{:,.0f}".format(product[4]).replace(",", " ") }} ₸
-
-</div>
-
-<div class="stock">
-
-{% if product[5]>0 %}
-
-<span style="color:#00d26a">
-
-✔ В наличии
-
-</span>
-
-{% else %}
-
-<span style="color:red">
-
-Нет в наличии
-
-</span>
-
-{% endif %}
-
-</div>
-
 <p>
 
 {{ product[2] }}
 
 </p>
 
-<br>
+<h2>
+
+{{ "{:,.0f}".format(product[4]).replace(",", " ") }} ₸
+
+</h2>
+
+{% if product[5] > 0 %}
+
+<p class="green">
+
+✔ В наличии
+
+</p>
+
+{% else %}
+
+<p class="red">
+
+Нет в наличии
+
+</p>
+
+{% endif %}
+
+<div style="margin-top:30px;">
 
 <a
 href="/cart/add/{{ product[0] }}"
-class="btn">
+class="btn glow">
 
 Добавить в корзину
 
@@ -81,7 +77,9 @@ class="btn">
 
 </div>
 
-<hr style="margin:60px 0;">
+</div>
+
+<hr>
 
 <h2>
 
@@ -89,21 +87,17 @@ class="btn">
 
 </h2>
 
-<div class="catalog-grid">
+<div class="products-grid">
 
 {% for item in related %}
 
 <div class="product-card">
 
-<div class="product-image">
-
 <img
-src="/static/images/products/{{ item[2] }}"
-onerror="this.src='/static/images/no-image.png'">
 
-</div>
+src="{{ url_for('static', filename='images/products/' ~ item[2]) }}"
 
-<div class="product-body">
+onerror="this.src='/static/images/no-image.png';">
 
 <h3>
 
@@ -111,13 +105,13 @@ onerror="this.src='/static/images/no-image.png'">
 
 </h3>
 
-<div class="product-rating">
+<div>
 
 ⭐ {{ item[4] }}
 
 </div>
 
-<div class="product-price">
+<div>
 
 {{ "{:,.0f}".format(item[3]).replace(",", " ") }} ₸
 
@@ -130,8 +124,6 @@ class="btn">
 Подробнее
 
 </a>
-
-</div>
 
 </div>
 

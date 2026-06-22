@@ -2,119 +2,71 @@
 
 {% block content %}
 
-<section class="page-header fade-up">
+<section class="page-header">
 
-    <h1>{{ model_name }}</h1>
+<h1>{{ model_name }}</h1>
 
-    <p>Каталог запчастей и товаров</p>
+<p>Каталог товаров</p>
 
 </section>
-
-<div class="catalog-toolbar">
-
-    <form method="GET" class="search-form">
-
-        <input
-            type="text"
-            name="q"
-            placeholder="Поиск запчастей..."
-            value="{{ request.args.get('q','') }}"
-            class="search-input">
-
-        <button type="submit" class="btn">
-            Поиск
-        </button>
-
-    </form>
-
-</div>
 
 <div class="catalog-grid">
 
 {% for p in products %}
 
-<div class="product-card fade-up">
+<div class="product-card">
 
-    <div class="product-image">
+<div class="product-image">
 
-        <img
-        src="/static/images/products/{{ p[3] }}"
-        alt="{{ p[1] }}"
-        onerror="this.src='/static/images/no-image.png';">
+<img
+src="{{ url_for('static', filename='images/products/' ~ p[3]) }}"
+onerror="this.src='/static/images/no-image.png';">
 
-    </div>
+</div>
 
-    <div class="product-body">
+<div class="product-body">
 
-        <div class="product-brand">
+<h2>{{ p[1] }}</h2>
 
-            {{ p[7] }}
+<p>{{ p[2] }}</p>
 
-        </div>
+<div class="price">
 
-        <h2>
+{{ "{:,.0f}".format(p[4]).replace(","," ") }} ₸
 
-            {{ p[1] }}
+</div>
 
-        </h2>
+<div class="rating">
 
-        <p>
+⭐ {{ p[6] }}
 
-            {{ p[2] }}
+</div>
 
-        </p>
+{% if p[5] > 0 %}
 
-        <div class="product-rating">
+<div class="stock green">
 
-            ⭐ {{ p[6] }}
+В наличии
 
-        </div>
+</div>
 
-        <div class="product-stock">
+{% else %}
 
-            {% if p[5] > 0 %}
+<div class="stock red">
 
-                <span style="color:#38d66b;">
-                    ✔ В наличии
-                </span>
+Нет в наличии
 
-            {% else %}
+</div>
 
-                <span style="color:#ff5b5b;">
-                    ✖ Нет в наличии
-                </span>
+{% endif %}
 
-            {% endif %}
+<a href="/product/{{ p[0] }}" class="btn">
 
-        </div>
+Подробнее
 
-        <div class="product-price">
+</a>
 
-            {{ "{:,.0f}".format(p[4]).replace(",", " ") }} ₸
-
-        </div>
-
-        <div class="product-buttons">
-
-            <a
-            href="/product/{{ p[0] }}"
-            class="btn">
-
-                Подробнее
-
-            </a>
-
-            <a
-            href="/buy/{{ p[0] }}"
-            class="btn btn-gold">
-
-                Купить
-
-            </a>
-
-        </div>
-
-    </div>
+</div>
 
 </div>
 

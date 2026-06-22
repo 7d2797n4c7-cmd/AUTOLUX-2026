@@ -2,31 +2,36 @@
 
 {% block content %}
 
-<h1 class="page-title">
+<section class="page-header">
 
-Корзина
+<h1>Корзина</h1>
 
-</h1>
+<p>Проверьте товары перед оформлением заказа</p>
+
+</section>
 
 {% if items %}
 
+<div class="cart-wrapper">
+
 <table class="cart-table">
+
+<thead>
 
 <tr>
 
-<th></th>
-
+<th>Фото</th>
 <th>Товар</th>
-
 <th>Цена</th>
-
-<th>Количество</th>
-
+<th>Кол-во</th>
 <th>Сумма</th>
-
 <th></th>
 
 </tr>
+
+</thead>
+
+<tbody>
 
 {% for item in items %}
 
@@ -35,25 +40,21 @@
 <td>
 
 <img
-    class="cart-image"
-    src="{{ url_for('static', filename='images/products/' ~ item[3]) }}"
-    onerror="this.src='/static/images/no-image.png';">
+class="cart-image"
+src="{{ url_for('static', filename='images/products/' ~ item[3]) }}"
+onerror="this.src='/static/images/no-image.png';">
 
 </td>
 
 <td>
 
-<b>
-
-{{ item[2] }}
-
-</b>
+<b>{{ item[2] }}</b>
 
 </td>
 
 <td>
 
-{{ "{:,.0f}".format(item[4]).replace(","," ") }} ₸
+{{ "{:,.0f}".format(item[4]).replace(",", " ") }} ₸
 
 </td>
 
@@ -65,15 +66,15 @@
 
 <td>
 
-{{ "{:,.0f}".format(item[4]*item[5]).replace(","," ") }} ₸
+{{ "{:,.0f}".format(item[4]*item[5]).replace(",", " ") }} ₸
 
 </td>
 
 <td>
 
 <a
-class="delete-btn"
-href="/cart/remove/{{ item[0] }}">
+href="/cart/remove/{{ item[0] }}"
+class="delete-btn">
 
 Удалить
 
@@ -84,6 +85,8 @@ href="/cart/remove/{{ item[0] }}">
 </tr>
 
 {% endfor %}
+
+</tbody>
 
 </table>
 
@@ -97,13 +100,13 @@ href="/cart/remove/{{ item[0] }}">
 
 <h1>
 
-{{ "{:,.0f}".format(total).replace(","," ") }} ₸
+{{ "{:,.0f}".format(total).replace(",", " ") }} ₸
 
 </h1>
 
 <a
-class="buy-btn"
-href="/checkout">
+href="/checkout"
+class="btn glow">
 
 Оформить заказ
 
@@ -111,27 +114,27 @@ href="/checkout">
 
 </div>
 
+</div>
+
 {% else %}
 
 <div class="empty-cart">
 
-<i class="bi bi-cart-x"></i>
-
 <h2>
 
-Корзина пустая
+🛒 Корзина пуста
 
 </h2>
 
 <p>
 
-Добавьте товары в корзину.
+Добавьте товары из каталога.
 
 </p>
 
 <a
-class="catalog-btn"
-href="/brands">
+href="/brands"
+class="btn">
 
 Перейти в каталог
 
