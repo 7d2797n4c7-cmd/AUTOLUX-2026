@@ -506,22 +506,50 @@ def product(product_id):
 
     cur.execute("""
         SELECT
-            id,
-            name,
-            price,
-            image,
-            brand,
-            rating,
-            description
-        FROM products
-        WHERE id=%s
+            p.id,
+            p.name,
+            p.description,
+            p.price,
+            p.image,
+            p.rating,
+            p.stock,
+            p.article,
+            b.name,
+            c.name,
+            m.name
+        FROM products p
+
+        LEFT JOIN car_brands b
+            ON p.brand_id = b.id
+
+        LEFT JOIN categories c
+            ON p.category_id = c.id
+
+        LEFT JOIN manufacturers m
+            ON p.manufacturer_id = m.id
+
+        WHERE p.id=%s
     """, (product_id,))
 
     product = cur.fetchone()
+    cur.execute("""
+SELECT
+    id,
+    name,
+    description,
+    price,
+    image
+FROM products
+WHERE id<>%s
+LIMIT 4
+""", (product_id,))
 
+related = cur.fetchall()
+
+    cur.close()
     conn.close()
 
-    if not product:
+    if product is None:
         return "Товар не найден", 404
 
     return render_template(

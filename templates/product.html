@@ -7,17 +7,8 @@
 <div class="product-left">
 
 <img class="product-image"
-src="{{ url_for('static', filename='products/' + product[5]) }}"
+src="{{ url_for('static', filename='images/products/' ~ product[4]) }}"
 onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
-
-<div class="gallery">
-
-<img src="{{ url_for('static', filename='products/' + product[5]) }}">
-<img src="{{ url_for('static', filename='products/' + product[5]) }}">
-<img src="{{ url_for('static', filename='products/' + product[5]) }}">
-<img src="{{ url_for('static', filename='products/' + product[5]) }}">
-
-</div>
 
 </div>
 
@@ -27,46 +18,32 @@ onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 
 <div class="rating">
 
-⭐ {{ product[7] }}
-
-<span>
-
-({{ product[8] }} отзывов)
-
-</span>
+⭐ {{ product[5] }}
 
 </div>
 
 <div class="article">
 
 Артикул:
-<b>{{ product[2] }}</b>
+<b>{{ product[7] }}</b>
 
 </div>
 
 <div class="price">
 
-{{ "{:,.0f}".format(product[4]).replace(",", " ") }} ₸
+{{ "{:,.0f}".format(product[3]).replace(",", " ") }} ₸
 
 </div>
 
 <div class="stock">
 
-{% if product[6]>0 %}
+{% if product[6] > 0 %}
 
-<span class="green">
-
-✔ В наличии
-
-</span>
+<span class="green">✔ В наличии</span>
 
 {% else %}
 
-<span class="red">
-
-Нет в наличии
-
-</span>
+<span class="red">Нет в наличии</span>
 
 {% endif %}
 
@@ -75,51 +52,18 @@ onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 <table class="specs">
 
 <tr>
-
-<td>Производитель</td>
-
-<td>{{ product[14] }}</td>
-
+<td>Бренд</td>
+<td>{{ product[8] }}</td>
 </tr>
 
 <tr>
-
-<td>Марка</td>
-
-<td>{{ product[11] }}</td>
-
-</tr>
-
-<tr>
-
-<td>Модель</td>
-
-<td>{{ product[12] }}</td>
-
-</tr>
-
-<tr>
-
 <td>Категория</td>
-
-<td>{{ product[13] }}</td>
-
-</tr>
-
-<tr>
-
-<td>Страна</td>
-
 <td>{{ product[9] }}</td>
-
 </tr>
 
 <tr>
-
-<td>Гарантия</td>
-
+<td>Производитель</td>
 <td>{{ product[10] }}</td>
-
 </tr>
 
 </table>
@@ -127,15 +71,11 @@ onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 <div class="buttons">
 
 <a class="buy-btn" href="/buy/{{ product[0] }}">
-
-Купить сейчас
-
+Купить
 </a>
 
 <a class="cart-btn" href="/cart/add/{{ product[0] }}">
-
 В корзину
-
 </a>
 
 </div>
@@ -146,25 +86,19 @@ onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 
 <div class="description">
 
-<h2>
-
-Описание
-
-</h2>
+<h2>Описание</h2>
 
 <p>
 
-{{ product[3] }}
+{{ product[2] }}
 
 </p>
 
 </div>
 
-<h2>
+{% if related %}
 
-Похожие товары
-
-</h2>
+<h2>Похожие товары</h2>
 
 <div class="products-grid">
 
@@ -174,23 +108,12 @@ onerror="this.src='https://placehold.co/700x700?text=AUTOLUX'">
 
 <a href="/product/{{ item[0] }}">
 
-<img
-src="{{ url_for('static', filename='images/products/' ~ p[3]) }}"
-onerror="this.src='{{ url_for('static', filename='images/no-image.png') }}'">
+<img src="{{ url_for('static', filename='images/products/' ~ item[4]) }}"
+onerror="this.src='https://placehold.co/300x300?text=AUTOLUX'">
 
-<h3>
-
-{{ item[1] }}
-
-</h3>
+<h3>{{ item[1] }}</h3>
 
 </a>
-
-<div class="rating">
-
-⭐ {{ item[4] }}
-
-</div>
 
 <div class="price">
 
@@ -210,5 +133,7 @@ href="/product/{{ item[0] }}">
 {% endfor %}
 
 </div>
+
+{% endif %}
 
 {% endblock %}
