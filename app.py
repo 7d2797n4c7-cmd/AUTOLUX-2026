@@ -453,45 +453,50 @@ def catalog(model_id):
 
         cur.execute("""
 SELECT
-    p.id,
-    p.name,
-    p.description,
-    p.image,
-    p.price,
-    p.stock,
-    p.rating,
-    m.name
-FROM products p
-LEFT JOIN manufacturers m
-ON m.id = p.manufacturer_id
-WHERE p.model_id=%s
-AND LOWER(p.name) LIKE LOWER(%s)
-ORDER BY p.name
-""", (model_id, "%" + search + "%"))
-
+    id,
+    title,
+    description,
+    image,
+    price,
+    stock,
+    rating,
+    brand
+FROM products
+WHERE model_id=%s
+AND LOWER(title) LIKE LOWER(%s)
+ORDER BY title
+""",(model_id,"%"+search+"%"))
     else:
 
-       cur.execute("""
+      cur.execute("""
 SELECT
-    p.id,
-    p.name,
-    p.description,
-    p.image,
-    p.price,
-    p.stock,
-    p.rating,
-    m.name
-FROM products p
-LEFT JOIN manufacturers m
-ON m.id = p.manufacturer_id
-WHERE p.model_id=%s
-ORDER BY p.name
-""", (model_id,))
+    id,
+    title,
+    description,
+    image,
+    price,
+    stock,
+    rating,
+    brand
+FROM products
+WHERE model_id=%s
+ORDER BY title
+""",(model_id,))
 
 
 # ===========================================
 # PRODUCT
 # ===========================================
+
+products = cur.fetchall()
+
+conn.close()
+
+return render_template(
+    "catalog.html",
+    products=products,
+    model_name=model_name
+)
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
@@ -501,16 +506,15 @@ def product(product_id):
 
     cur.execute("""
 SELECT
-    id,
-    title,
-    description,
-    image,
-    price,
-    stock,
-    rating
-FROM products
-WHERE id=%s
-""", (product_id,))
+    p.id,
+    p.title,
+    p.image,
+    p.price,
+    p.rating
+FROM products p
+WHERE p.id<>%s
+LIMIT 4
+""",(product_id,))
 
     product=cur.fetchone()
 
