@@ -487,12 +487,12 @@ INSERT INTO car_brands(name,image) VALUES
 ('Exeed','exeed.webp'),
 ('Chery','chery.webp'),
 ('Jetour','jetour.webp'),
-('BYD','bud.jpg'),
+
 ('JAC','jac.webp'),
 ('Zeekr','zeekr.webp'),
 ('Voyah','voyah.webp'),
 ('Omoda','omoda.webp'),
-('Jaecoo','jaecoo.png'),
+
 ('Hongqi','hongqi.webp'),
 ('Lynk & Co','lynkco.webp');
 INSERT INTO manufacturers(name,logo)

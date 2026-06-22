@@ -1689,15 +1689,15 @@ def checkout():
     if request.method == "POST":
 
         cur.execute("""
-            SELECT
-                product_id,
-                qty,
-                p.price
-            FROM cart
-            JOIN products p
-                ON p.id = cart.product_id
-            WHERE user_id=%s
-        """, (session["user_id"],))
+SELECT
+    cart.product_id,
+    cart.qty,
+    products.price
+FROM cart
+JOIN products
+ON products.id = cart.product_id
+WHERE cart.username=%s
+""", (session["username"],))
 
         items = cur.fetchall()
 
@@ -1767,10 +1767,10 @@ RETURNING id
                 item[2]
             ))
 
-        cur.execute("""
-            DELETE FROM cart
-            WHERE user_id=%s
-        """, (session["user_id"],))
+       cur.execute("""
+DELETE FROM cart
+WHERE username=%s
+""", (session["username"],))
 
         conn.commit()
 
