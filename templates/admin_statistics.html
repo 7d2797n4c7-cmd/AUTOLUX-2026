@@ -150,21 +150,21 @@
 
 {% for p in top_products %}
 
-<div class="top-item">
+<tr>
 
-<div>
+<td>
 
-{{ p[0] }}
+{{ p.title }}
 
-</div>
+</td>
 
-<div>
+<td>
 
-{{ p[1] }} продаж
+{{ p.sold }}
 
-</div>
+</td>
 
-</div>
+</tr>
 
 {% endfor %}
 
