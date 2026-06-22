@@ -432,56 +432,63 @@ def brand_models(brand_id):
 @app.route("/catalog/<int:model_id>")
 def catalog(model_id):
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
-
         SELECT name
-
         FROM car_models
-
         WHERE id=%s
-
     """,(model_id,))
 
-    model_name=cur.fetchone()[0]
+    model_name = cur.fetchone()[0]
 
-    search=request.args.get("q","")
+    search = request.args.get("q","")
 
     if search:
 
         cur.execute("""
-SELECT
-    id,
-    title,
-    description,
-    image,
-    price,
-    stock,
-    rating,
-    brand
-FROM products
-WHERE model_id=%s
-AND LOWER(title) LIKE LOWER(%s)
-ORDER BY title
-""",(model_id,"%"+search+"%"))
+        SELECT
+            id,
+            title,
+            description,
+            image,
+            price,
+            stock,
+            rating,
+            brand
+        FROM products
+        WHERE model_id=%s
+        AND LOWER(title) LIKE LOWER(%s)
+        ORDER BY title
+        """,(model_id,"%"+search+"%"))
+
     else:
 
-      cur.execute("""
-SELECT
-    id,
-    title,
-    description,
-    image,
-    price,
-    stock,
-    rating,
-    brand
-FROM products
-WHERE model_id=%s
-ORDER BY title
-""",(model_id,))
+        cur.execute("""
+        SELECT
+            id,
+            title,
+            description,
+            image,
+            price,
+            stock,
+            rating,
+            brand
+        FROM products
+        WHERE model_id=%s
+        ORDER BY title
+        """,(model_id,))
+
+    products = cur.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "catalog.html",
+        products=products,
+        model_name=model_name
+    )
 
 
 # ===========================================
@@ -504,44 +511,67 @@ def product(product_id):
     conn = db()
     cur = conn.cursor()
 
-    cur.execute("""
-SELECT
-    p.id,
-    p.title,
-    p.image,
-    p.price,
-    p.rating
-FROM products p
-WHERE p.id<>%s
-LIMIT 4
-""",(product_id,))
-
-    product=cur.fetchone()
-
-    if not product:
-        conn.close()
-        return "Товар не найден",404
+    # Получаем товар
 
     cur.execute("""
+
         SELECT
-            p.id,
-            p.name,
-            p.image,
-            p.price,
-            p.rating
-        FROM products p
-        WHERE p.id<>%s
-        LIMIT 4
+
+            id,
+            title,
+            description,
+            image,
+            price,
+            stock,
+            rating,
+            brand
+
+        FROM products
+
+        WHERE id=%s
+
     """,(product_id,))
 
-    related=cur.fetchall()
+    product = cur.fetchone()
+
+    if not product:
+
+        conn.close()
+
+        return "Товар не найден",404
+
+    # Похожие товары
+
+    cur.execute("""
+
+        SELECT
+
+            id,
+            title,
+            image,
+            price,
+            rating
+
+        FROM products
+
+        WHERE id<>%s
+
+        LIMIT 4
+
+    """,(product_id,))
+
+    related = cur.fetchall()
 
     conn.close()
 
     return render_template(
+
         "product.html",
+
         product=product,
+
         related=related
+
     )
     
 # ===========================================
