@@ -177,20 +177,18 @@ def home():
 
     brands = cur.fetchall()
 
-   cur.execute("""
-SELECT
-    p.id,
-    p.name,
-    p.price,
-    p.image,
-    m.name,
-    p.rating
-FROM products p
-LEFT JOIN manufacturers m
-ON m.id=p.manufacturer_id
-ORDER BY p.sold DESC
-LIMIT 8
-""")
+    cur.execute("""
+        SELECT
+            id,
+            title,
+            price,
+            image,
+            brand,
+            rating
+        FROM products
+        ORDER BY sold DESC
+        LIMIT 8
+    """)
 
     popular_products = cur.fetchall()
 
@@ -454,52 +452,41 @@ def catalog(model_id):
     if search:
 
         cur.execute("""
-
-            SELECT
-p.id,
-p.name,
-p.description,
-p.image,
-p.price,
-p.stock,
-p.rating,
-m.name
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.image,
+    p.price,
+    p.stock,
+    p.rating,
+    m.name
 FROM products p
 LEFT JOIN manufacturers m
-ON m.id=p.manufacturer_id
+ON m.id = p.manufacturer_id
 WHERE p.model_id=%s
 AND LOWER(p.name) LIKE LOWER(%s)
 ORDER BY p.name
-
-        """,(model_id,"%"+search+"%"))
+""", (model_id, "%" + search + "%"))
 
     else:
 
-        cur.execute("""
-
-            SELECT *
-
-            FROM products
-
-            WHERE model_id=%s
-
-            ORDER BY title
-
-        """,(model_id,))
-
-    products=cur.fetchall()
-
-    conn.close()
-
-    return render_template(
-
-        "catalog.html",
-
-        products=products,
-
-        model_name=model_name
-
-    )
+       cur.execute("""
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.image,
+    p.price,
+    p.stock,
+    p.rating,
+    m.name
+FROM products p
+LEFT JOIN manufacturers m
+ON m.id = p.manufacturer_id
+WHERE p.model_id=%s
+ORDER BY p.name
+""", (model_id,))
 
 
 # ===========================================
@@ -509,48 +496,44 @@ ORDER BY p.name
 @app.route("/product/<int:product_id>")
 def product(product_id):
 
-    conn = db()
-    cur = conn.cursor()
+    conn=db()
+    cur=conn.cursor()
 
     cur.execute("""
-        SELECT
-            p.id,
-            p.name,
-            p.description,
-            p.price,
-            p.image,
-            p.rating,
-            p.stock,
-            p.article,
-            b.name,
-            c.name,
-            m.name
-        FROM products p
+    SELECT
+    id,
+    name,
+    description,
+    image,
+    price,
+    stock,
+    rating,
+    article
+    FROM products
+    WHERE id=%s
+    """,(product_id,))
 
-        LEFT JOIN car_brands b
-            ON p.brand_id = b.id
+    product=cur.fetchone()
 
-        LEFT JOIN categories c
-            ON p.category_id = c.id
+    cur.execute("""
+    SELECT
+    id,
+    name,
+    image,
+    price
+    FROM products
+    WHERE id<>%s
+    LIMIT 4
+    """,(product_id,))
 
-        LEFT JOIN manufacturers m
-            ON p.manufacturer_id = m.id
+    related=cur.fetchall()
 
-        WHERE p.id=%s
-    """, (product_id,))
-
-    product = cur.fetchone()
-    
-
-    cur.close()
     conn.close()
-
-    if product is None:
-        return "Товар не найден", 404
 
     return render_template(
         "product.html",
-        product=product
+        product=product,
+        related=related
     )
     
 # ===========================================
