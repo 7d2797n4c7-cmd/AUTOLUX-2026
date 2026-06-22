@@ -359,33 +359,22 @@ def logout():
 @app.route("/brands")
 def brands():
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
-
-        SELECT
-
-            id,
-            name,
-            image
-
+        SELECT id,name,image
         FROM car_brands
-
         ORDER BY name
-
     """)
 
-    brands=cur.fetchall()
+    brands = cur.fetchall()
 
     conn.close()
 
     return render_template(
-
         "brands.html",
-
         brands=brands
-
     )
 
 
