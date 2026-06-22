@@ -584,16 +584,19 @@ def cart():
             p.title,
             p.image,
             p.price,
-            c.qty
+            c.quantity
         FROM cart c
         JOIN products p
-        ON p.id = c.product_id
-        WHERE c.username=%s
-    """,(session["username"],))
+            ON p.id = c.product_id
+        WHERE c.user_id=%s
+    """, (session["user_id"],))
 
     items = cur.fetchall()
 
-    total = sum(item[4] * item[5] for item in items)
+    total = 0
+
+    for item in items:
+        total += item[4] * item[5]
 
     cur.close()
     conn.close()
@@ -618,11 +621,11 @@ def add_to_cart(product_id):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, qty
+        SELECT id, quantity
         FROM cart
-        WHERE username=%s
+        WHERE user_id=%s
         AND product_id=%s
-    """,(session["username"], product_id))
+    """, (session["user_id"], product_id))
 
     item = cur.fetchone()
 
@@ -630,18 +633,18 @@ def add_to_cart(product_id):
 
         cur.execute("""
             UPDATE cart
-            SET qty=qty+1
+            SET quantity = quantity + 1
             WHERE id=%s
-        """,(item[0],))
+        """, (item[0],))
 
     else:
 
         cur.execute("""
             INSERT INTO cart
             (
-                username,
+                user_id,
                 product_id,
-                qty
+                quantity
             )
             VALUES
             (
@@ -649,7 +652,7 @@ def add_to_cart(product_id):
                 %s,
                 1
             )
-        """,(session["username"], product_id))
+        """, (session["user_id"], product_id))
 
     conn.commit()
 
@@ -1718,138 +1721,120 @@ def admin_logs():
     )
     
     
-@app.route("/checkout", methods=["GET","POST"])
+@app.route("/checkout", methods=["GET", "POST"])
 def checkout():
 
     if "user_id" not in session:
         return redirect("/login")
 
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-        fullname=request.form["fullname"]
-        phone=request.form["phone"]
-        city=request.form["city"]
-        address=request.form["address"]
-        comment=request.form["comment"]
-        payment=request.form["payment"]
+        fullname = request.form["fullname"]
+        phone = request.form["phone"]
+        city = request.form["city"]
+        address = request.form["address"]
+        comment = request.form["comment"]
+        payment = request.form["payment"]
+
+        # Получаем товары из корзины
 
         cur.execute("""
+            SELECT
+                cart.product_id,
+                cart.quantity,
+                products.price
+            FROM cart
+            JOIN products
+                ON products.id = cart.product_id
+            WHERE cart.user_id = %s
+        """, (session["user_id"],))
 
-        SELECT
+        items = cur.fetchall()
 
-            cart.product_id,
-            cart.qty,
-            products.price
-
-        FROM cart
-
-        JOIN products
-
-        ON products.id=cart.product_id
-
-        WHERE cart.username=%s
-
-        """,(session["username"],))
-
-        items=cur.fetchall()
-
-        total=0
+        total = 0
 
         for item in items:
+            total += item[1] * item[2]
 
-            total+=item[4]*item[5]
+        # Создаем заказ
 
         cur.execute("""
-
-        INSERT INTO orders
-        (
-
-            user_id,
-            full_name,
-            phone,
-            address,
-            comment,
-            total_price
-
-        )
-
-        VALUES
-        (
-            %s,
-            %s,
-            %s,
-            %s,
-            %s,
-            %s
-        )
-
-        RETURNING id
-
-        """,(
-
+            INSERT INTO orders
+            (
+                user_id,
+                full_name,
+                phone,
+                address,
+                comment,
+                total_price
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
+            RETURNING id
+        """, (
             session["user_id"],
             fullname,
             phone,
             address,
             comment,
             total
-
         ))
 
-        order_id=cur.fetchone()[0]
+        order_id = cur.fetchone()[0]
+
+        # Добавляем товары заказа
 
         for item in items:
 
             cur.execute("""
-
-            INSERT INTO order_items
-            (
-
-                order_id,
-                product_id,
-                quantity,
-                price
-
-            )
-
-            VALUES
-            (
-
-                %s,
-                %s,
-                %s,
-                %s
-
-            )
-
-            """,(
-
+                INSERT INTO order_items
+                (
+                    order_id,
+                    product_id,
+                    quantity,
+                    price
+                )
+                VALUES
+                (
+                    %s,
+                    %s,
+                    %s,
+                    %s
+                )
+            """, (
                 order_id,
                 item[0],
                 item[1],
                 item[2]
-
             ))
 
+        # Очищаем корзину
+
         cur.execute("""
-
-        DELETE FROM cart
-
-        WHERE username=%s
-
-        """,(session["username"],))
+            DELETE FROM cart
+            WHERE user_id = %s
+        """, (session["user_id"],))
 
         conn.commit()
 
-        flash("Заказ успешно оформлен!")
-
+        cur.close()
         conn.close()
+
+        flash("Заказ успешно оформлен!")
 
         return redirect("/profile")
 
+    cur.close()
     conn.close()
 
     return render_template("checkout.html")
